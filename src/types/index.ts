@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-export type VisualRole = "admin" | "operator" | "consultant";
+import type { AppRole } from "@/types/database";
 
 export type NavigationItemId =
   | "dashboard"
@@ -10,7 +10,9 @@ export type NavigationItemId =
   | "recharges"
   | "operators"
   | "reports"
-  | "settings";
+  | "settings"
+  | "settings-users"
+  | "account";
 
 export interface NavigationItem {
   id: NavigationItemId;
@@ -18,6 +20,8 @@ export interface NavigationItem {
   path: string;
   icon: LucideIcon;
   matchPrefix?: string;
+  /** Papéis que podem ver o item. Ocultar menu ≠ autorização real (RLS + guards). */
+  roles: AppRole[];
 }
 
 export interface PageMeta {

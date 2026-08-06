@@ -10,6 +10,10 @@ import {
 } from "lucide-react";
 
 import type { DemoOperator, NavigationItem, PageMeta } from "@/types";
+import type { AppRole } from "@/types/database";
+
+const ALL_ROLES: AppRole[] = ["admin", "operator", "consultant"];
+const OFFICE_ROLES: AppRole[] = ["admin", "operator"];
 
 export const navigationItems: NavigationItem[] = [
   {
@@ -17,12 +21,14 @@ export const navigationItems: NavigationItem[] = [
     label: "Dashboard",
     path: "/dashboard",
     icon: LayoutDashboard,
+    roles: ALL_ROLES,
   },
   {
     id: "consultants",
     label: "Consultores",
     path: "/consultores",
     icon: Users,
+    roles: OFFICE_ROLES,
   },
   {
     id: "merchants",
@@ -30,6 +36,7 @@ export const navigationItems: NavigationItem[] = [
     path: "/lojistas",
     icon: Store,
     matchPrefix: "/lojistas",
+    roles: ALL_ROLES,
   },
   {
     id: "contracts",
@@ -37,37 +44,58 @@ export const navigationItems: NavigationItem[] = [
     path: "/contratos",
     icon: FileText,
     matchPrefix: "/contratos",
+    roles: ALL_ROLES,
   },
   {
     id: "recharges",
     label: "Recargas",
     path: "/recargas",
     icon: RefreshCw,
+    roles: ALL_ROLES,
   },
   {
     id: "operators",
     label: "Operadoras",
     path: "/operadoras",
     icon: Building2,
+    roles: ["admin"],
   },
   {
     id: "reports",
     label: "Relatórios",
     path: "/relatorios",
     icon: ClipboardList,
+    roles: OFFICE_ROLES,
   },
   {
     id: "settings",
     label: "Configurações",
     path: "/configuracoes",
     icon: Settings,
+    matchPrefix: "/configuracoes",
+    roles: ["admin"],
   },
 ];
+
+export function getNavigationForRole(role: AppRole | null): NavigationItem[] {
+  if (!role) {
+    return [];
+  }
+  return navigationItems.filter((item) => item.roles.includes(role));
+}
 
 export const pageMetaByPath: Record<string, PageMeta> = {
   "/login": {
     title: "Entrar",
     description: "Acesso à plataforma operacional DHub",
+  },
+  "/esqueci-senha": {
+    title: "Recuperar senha",
+    description: "Solicitação de redefinição",
+  },
+  "/redefinir-senha": {
+    title: "Redefinir senha",
+    description: "Defina uma nova senha",
   },
   "/dashboard": {
     title: "Dashboard",
@@ -100,6 +128,14 @@ export const pageMetaByPath: Record<string, PageMeta> = {
   "/configuracoes": {
     title: "Configurações",
     description: "Organização, usuários e integrações futuras",
+  },
+  "/configuracoes/usuarios": {
+    title: "Usuários",
+    description: "Membros da organização (somente leitura nesta sprint)",
+  },
+  "/conta": {
+    title: "Minha conta",
+    description: "Perfil e dados pessoais permitidos",
   },
   "/acesso-negado": {
     title: "Acesso negado",
@@ -148,10 +184,3 @@ export const demoOperators: DemoOperator[] = [
   { id: "vr", name: "VR", status: "not_configured" },
   { id: "valecard", name: "ValeCard", status: "not_configured" },
 ];
-
-export const provisionalUser = {
-  name: "Administrador",
-  initials: "AD",
-  roleLabel: "Administrador",
-  visualRole: "admin" as const,
-};

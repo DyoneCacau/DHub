@@ -1,0 +1,46 @@
+-- Bootstrap manual do primeiro administrador (NÃO executar automaticamente).
+-- Pré-requisito: criar o usuário no Supabase Auth (Dashboard) e obter o UUID.
+-- Substituir os placeholders abaixo. Não versionar e-mail/senha reais neste arquivo.
+
+-- begin;
+--
+-- insert into public.organizations (id, name, slug, status)
+-- values (
+--   '00000000-0000-4000-8000-000000000001',
+--   'Prime Service',
+--   'prime-service',
+--   'active'
+-- )
+-- on conflict (slug) do nothing;
+--
+-- -- Garante profile (trigger já cria na inserção Auth; este upsert é idempotente)
+-- insert into public.profiles (id, full_name, email)
+-- values (
+--   '<AUTH_USER_UUID>',
+--   'Administrador',
+--   '<AUTH_USER_EMAIL>'
+-- )
+-- on conflict (id) do update
+--   set full_name = excluded.full_name,
+--       email = excluded.email;
+--
+-- insert into public.organization_members (
+--   organization_id,
+--   user_id,
+--   role,
+--   status,
+--   created_by
+-- )
+-- values (
+--   (select id from public.organizations where slug = 'prime-service'),
+--   '<AUTH_USER_UUID>',
+--   'admin',
+--   'active',
+--   '<AUTH_USER_UUID>'
+-- )
+-- on conflict (organization_id, user_id) do update
+--   set role = 'admin',
+--       status = 'active',
+--       updated_at = now();
+--
+-- commit;

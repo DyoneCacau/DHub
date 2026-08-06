@@ -14,32 +14,28 @@ Consultor → Lojista → Contrato por operadora → Conferência → Recargas
 
 Contrato e recarga são entidades distintas.
 
-## Stack (Sprint 1)
+## Stack
 
 - React + TypeScript + Vite
 - Tailwind CSS + shadcn/ui
-- React Router
-- TanStack Query
+- React Router + TanStack Query
 - React Hook Form + Zod
-- Lucide React
-- ESLint + Prettier
+- **Supabase Auth + PostgreSQL (RLS)** — Sprint 2
+- Lucide React, ESLint, Prettier
 
-## Pré-requisitos
+## Ambiente
 
-- Node.js 20+ (recomendado)
-- npm 10+
-
-## Instalação
+1. Copie `.env.example` para `.env.local`
+2. Preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` (nunca commitar `.env.local`)
+3. Aplique migrations quando autorizado (ver `docs/SUPABASE_SETUP.md`)
+4. Execute o bootstrap do primeiro admin (SQL revisado)
 
 ```bash
 npm install
-```
-
-## Execução
-
-```bash
 npm run dev
 ```
+
+Detalhes: [`docs/SUPABASE_SETUP.md`](./docs/SUPABASE_SETUP.md) · testes RLS: [`docs/RLS_TEST_PLAN.md`](./docs/RLS_TEST_PLAN.md)
 
 ## Scripts
 
@@ -52,68 +48,52 @@ npm run dev
 | `npm run preview` | Preview do build |
 | `npm run format` | Prettier |
 
-> `typecheck` usa `-p tsconfig.app.json` porque o `tsconfig.json` raiz é composto por project references (`tsc -b` no build).
-
 ## Estrutura
 
 ```text
 src/
-  app/           # App, providers, query client
-  components/    # layout, shared, ui
-  config/        # navegação e dados demonstrativos
-  lib/           # utilitários (cn)
-  pages/         # páginas estruturais
-  routes/        # definição de rotas
-  styles/        # CSS global / tokens
-  types/         # tipos mínimos locais
+  app/              # bootstrap, providers
+  components/       # layout, shared, ui
+  config/           # env, navegação
+  features/auth/    # auth service, guards, hooks
+  lib/              # supabase client, utils
+  pages/
+  routes/
+  types/
+supabase/
+  migrations/       # SQL versionado (não aplicado remotamente sem autorização)
+  bootstrap/        # exemplo de primeiro admin
+docs/
 ```
 
-## Rotas
+## Rotas (Sprint 2)
 
-| Rota | Descrição |
-|------|-----------|
-| `/login` | Interface de login (sem auth real) |
-| `/dashboard` | Indicadores estruturais |
-| `/consultores` | Lista estrutural |
-| `/lojistas` | Lista estrutural |
-| `/lojistas/:merchantId` | Detalhe com abas |
-| `/contratos` | Lista estrutural |
-| `/contratos/:contractId` | Detalhe estrutural |
-| `/recargas` | Lista estrutural |
-| `/operadoras` | LeCard, Pluxee, Ticket, VR, ValeCard (local) |
-| `/relatorios` | Estrutura sem gráficos |
-| `/configuracoes` | Seções visuais + integrações futuras |
-| `/acesso-negado` | Página estrutural |
-| `*` | 404 |
+| Rota | Acesso |
+|------|--------|
+| `/login`, `/esqueci-senha` | Público |
+| `/redefinir-senha` | Sessão de recovery |
+| `/dashboard`, módulos estruturais | Membership ativa |
+| `/configuracoes`, `/configuracoes/usuarios`, `/operadoras` | Admin |
+| `/consultores`, `/relatorios` | Admin / Operator |
+| `/conta` | Membership ativa |
+| `/acesso-negado` | Autenticado com papel insuficiente |
 
-## Estado atual (Sprint 1)
+## Estado atual
 
-- Fundação frontend na raiz do repositório
-- Layout administrativo responsivo
-- Navegação desktop/mobile
-- Páginas estruturais e estados vazios
-- Validação local do formulário de login
+- Sprint 1: fundação visual
+- Sprint 2: Auth + org + membership + RLS (migrations locais; **sem push remoto automático**)
+- Sem CRUD de lojistas/contratos/recargas
+- Sem `service_role` no frontend
 
-## Limitações da Sprint 1
+## Limitações
 
-- **Supabase não está conectado**
-- Sem autenticação real, sessão ou RLS
-- Sem CRUD, migrations, SQL ou buckets
-- Sem upload e sem integrações (Dropbox, n8n, Suri, WhatsApp)
-- **Não existem dados reais** (sem CPF/CNPJ reais)
-- Operadoras são configuração local demonstrativa
+- Migrations podem ainda não estar aplicadas no projeto remoto
+- Bootstrap do admin é manual
+- Lista de usuários é somente leitura (sem alteração de papel no app)
+- Módulos de negócio continuam estruturais
 
 ## Próximas sprints
 
-1. ~~Documentação~~ / ~~Fundação frontend~~
-2. Supabase, autenticação e autorização
-3. Configuração de operadoras
-4. Consultores e lojistas
-5. Contratos e documentos
-6. Conferência e pendências
-7. Recargas
-8. Dashboard e relatórios
-9–11. Integrações
-12. Segurança, testes e produção
+3. Configuração de operadoras · 4. Consultores/lojistas · 5+ contratos/recargas · 9–11 integrações
 
 Documentação arquitetural: pasta [`docs/`](./docs).

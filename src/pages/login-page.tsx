@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,15 +13,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-const loginSchema = z.object({
-  email: z.string().min(1, "Informe o e-mail").email("E-mail inválido"),
-  password: z.string().min(1, "Informe a senha"),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { signInWithPassword } from "@/features/auth/api/auth-service";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import {
+  loginSchema,
+  type LoginFormValues,
+} from "@/features/auth/schemas/auth-schemas";
 
 export function LoginPage() {
+  const navigate = useNavigate();
+  const { refreshAccess } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -35,11 +37,43 @@ export function LoginPage() {
     },
   });
 
-  function onSubmit(_values: LoginFormValues) {
-    setError("root", {
-      message:
-        "A autenticação real será implementada na Sprint 2. Nenhum dado foi enviado.",
-    });
+  async function onSubmit(values: LoginFormValues) {
+    if (submitting) {
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await signInWithPassword(values.email, values.password);
+      const nextState = await refreshAccess();
+      if (nextState === "ready") {
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+      if (nextState === "membership_inactive") {
+        setError("root", {
+          message: "Sua membership está inativa. Contate um administrador.",
+        });
+        return;
+      }
+      if (nextState === "authenticated_no_membership") {
+        setError("root", {
+          message: "Acesso pendente: nenhuma membership ativa encontrada.",
+        });
+        return;
+      }
+      setError("root", {
+        message: "Não foi possível liberar o acesso. Tente novamente.",
+      });
+    } catch (error) {
+      setError("root", {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Não foi possível entrar. Tente novamente.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -66,6 +100,7 @@ export function LoginPage() {
                 autoComplete="username"
                 placeholder="seu.email@empresa.com"
                 aria-invalid={Boolean(errors.email)}
+                disabled={submitting}
                 {...register("email")}
               />
               {errors.email ? (
@@ -82,6 +117,7 @@ export function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 aria-invalid={Boolean(errors.password)}
+                disabled={submitting}
                 {...register("password")}
               />
               {errors.password ? (
@@ -92,24 +128,24 @@ export function LoginPage() {
             </div>
 
             {errors.root ? (
-              <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground" role="status">
+              <p
+                className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground"
+                role="alert"
+              >
                 {errors.root.message}
               </p>
             ) : null}
 
-            <Button type="submit" className="w-full">
-              Entrar
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? "Entrando…" : "Entrar"}
             </Button>
 
-            <div className="flex items-center justify-between text-sm">
-              <button
-                type="button"
+            <div className="text-sm">
+              <Link
+                to="/esqueci-senha"
                 className="text-primary underline-offset-4 hover:underline"
               >
                 Esqueci minha senha
-              </button>
-              <Link to="/dashboard" className="text-muted-foreground hover:text-foreground">
-                Ver layout (demo)
               </Link>
             </div>
           </form>

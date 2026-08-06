@@ -1,4 +1,6 @@
 import { Menu, Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,14 +13,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { provisionalUser } from "@/config/navigation";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { formatRole } from "@/features/auth/types/auth";
 
 interface AppHeaderProps {
   title: string;
   onOpenMobileNav: () => void;
 }
 
+function initialsFromName(name: string | null | undefined, email: string | null | undefined) {
+  const source = name?.trim() || email?.trim() || "U";
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`.toUpperCase();
+  }
+  return source.slice(0, 2).toUpperCase();
+}
+
 export function AppHeader({ title, onOpenMobileNav }: AppHeaderProps) {
+  const navigate = useNavigate();
+  const { profile, organization, role, logout } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    if (loggingOut) {
+      return;
+    }
+    setLoggingOut(true);
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch {
+      navigate("/login", { replace: true });
+    } finally {
+      setLoggingOut(false);
+    }
+  }
+
+  const displayName = profile?.full_name?.trim() || profile?.email || "Usuário";
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-card/95 px-4 backdrop-blur md:px-6">
       <Button
@@ -59,21 +92,46 @@ export function AppHeader({ title, onOpenMobileNav }: AppHeaderProps) {
             aria-label="Menu do usuário"
           >
             <Avatar>
-              <AvatarFallback>{provisionalUser.initials}</AvatarFallback>
+              <AvatarFallback>
+                {initialsFromName(profile?.full_name, profile?.email)}
+              </AvatarFallback>
             </Avatar>
             <span className="hidden text-left text-sm sm:block">
-              <span className="block font-medium">{provisionalUser.name}</span>
+              <span className="block font-medium">{displayName}</span>
               <span className="block text-xs text-muted-foreground">
-                {provisionalUser.roleLabel}
+                {formatRole(role)}
+                {organization ? ` · ${organization.name}` : ""}
               </span>
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Perfil provisório</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-64">
+          <DropdownMenuLabel>
+            <div className="space-y-1">
+              <p>{displayName}</p>
+              <p className="text-xs font-normal text-muted-foreground">
+                {formatRole(role)}
+              </p>
+              {organization ? (
+                <p className="text-xs font-normal text-muted-foreground">
+                  {organization.name}
+                </p>
+              ) : null}
+            </div>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem disabled>Conta (Sprint 2)</DropdownMenuItem>
-          <DropdownMenuItem disabled>Sair (Sprint 2)</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/conta">Minha conta</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={loggingOut}
+            onSelect={(event) => {
+              event.preventDefault();
+              void handleLogout();
+            }}
+          >
+            {loggingOut ? "Saindo…" : "Sair"}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

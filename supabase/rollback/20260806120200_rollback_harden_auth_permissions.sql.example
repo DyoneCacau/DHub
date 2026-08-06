@@ -1,0 +1,107 @@
+-- ROLLBACK Sprint 2.1 — Harden auth permissions
+-- EXEMPLO. NÃO EXECUTAR sem autorização explícita.
+-- Restaura somente grants/funções/default privileges desta migration.
+-- NÃO remove tabelas, policies RLS existentes nem dados.
+
+-- begin;
+
+-- ---------------------------------------------------------------------------
+-- 1) Remover proteção extra de organizations
+-- ---------------------------------------------------------------------------
+-- drop trigger if exists organizations_enforce_immutable on public.organizations;
+-- drop function if exists public.enforce_organization_immutable_columns();
+
+-- ---------------------------------------------------------------------------
+-- 2) Restaurar funções ao estado pós-Sprint 2 (search_path = public)
+--     e enforce_profile sem bloqueio de created_at
+-- ---------------------------------------------------------------------------
+-- create or replace function public.has_active_membership(p_organization_id uuid)
+-- returns boolean
+-- language sql stable security definer set search_path = public
+-- as $$
+--   select exists (
+--     select 1 from public.organization_members m
+--     where m.organization_id = p_organization_id
+--       and m.user_id = auth.uid() and m.status = 'active'
+--   );
+-- $$;
+--
+-- create or replace function public.has_org_role(p_organization_id uuid, p_roles public.app_role[])
+-- returns boolean
+-- language sql stable security definer set search_path = public
+-- as $$
+--   select exists (
+--     select 1 from public.organization_members m
+--     where m.organization_id = p_organization_id
+--       and m.user_id = auth.uid() and m.status = 'active'
+--       and m.role = any (p_roles)
+--   );
+-- $$;
+--
+-- create or replace function public.is_org_admin(p_organization_id uuid)
+-- returns boolean
+-- language sql stable security definer set search_path = public
+-- as $$
+--   select public.has_org_role(p_organization_id, array['admin']::public.app_role[]);
+-- $$;
+--
+-- create or replace function public.is_active_member_of_any_org()
+-- returns boolean
+-- language sql stable security definer set search_path = public
+-- as $$
+--   select exists (
+--     select 1 from public.organization_members m
+--     where m.user_id = auth.uid() and m.status = 'active'
+--   );
+-- $$;
+--
+-- create or replace function public.set_updated_at()
+-- returns trigger language plpgsql set search_path = public
+-- as $$ begin new.updated_at = now(); return new; end; $$;
+--
+-- -- Restaurar handle_new_user / audit_organization_member_changes / enforce_profile
+-- -- a partir de 20260806120000 + 20260806120100 (copiar corpos se necessário).
+
+-- ---------------------------------------------------------------------------
+-- 3) Grants de função (estado efetivo pré-2.1: EXECUTE amplo via defaults)
+--     Rollback “intencional” da Sprint 2 (só authenticated nos helpers):
+-- ---------------------------------------------------------------------------
+-- revoke all on function public.has_active_membership(uuid) from public, anon, authenticated;
+-- revoke all on function public.has_org_role(uuid, public.app_role[]) from public, anon, authenticated;
+-- revoke all on function public.is_org_admin(uuid) from public, anon, authenticated;
+-- revoke all on function public.is_active_member_of_any_org() from public, anon, authenticated;
+-- grant execute on function public.has_active_membership(uuid) to authenticated;
+-- grant execute on function public.has_org_role(uuid, public.app_role[]) to authenticated;
+-- grant execute on function public.is_org_admin(uuid) to authenticated;
+-- grant execute on function public.is_active_member_of_any_org() to authenticated;
+--
+-- revoke all on function public.handle_new_user() from public, anon, authenticated;
+-- revoke all on function public.audit_organization_member_changes() from public, anon, authenticated;
+-- revoke all on function public.set_updated_at() from public, anon, authenticated;
+-- revoke all on function public.enforce_profile_self_update() from public, anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- 4) Grants de tabela (estado pretendido pela migration 120000, não o ALL remoto)
+-- ---------------------------------------------------------------------------
+-- revoke all on table public.organizations from public, anon, authenticated;
+-- revoke all on table public.profiles from public, anon, authenticated;
+-- revoke all on table public.organization_members from public, anon, authenticated;
+-- revoke all on table public.audit_logs from public, anon, authenticated;
+--
+-- grant select, update on table public.organizations to authenticated;
+-- grant select, update on table public.profiles to authenticated;
+-- grant select on table public.organization_members to authenticated;
+-- grant select on table public.audit_logs to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- 5) Default privileges postgres/public (reativar ALL/EXECUTE amplo — NÃO recomendado)
+--     Somente se for necessário reverter o endurecimento de objetos futuros.
+-- ---------------------------------------------------------------------------
+-- alter default privileges for role postgres in schema public
+--   grant all on tables to anon, authenticated, service_role;
+-- alter default privileges for role postgres in schema public
+--   grant all on sequences to anon, authenticated, service_role;
+-- alter default privileges for role postgres in schema public
+--   grant execute on functions to anon, authenticated, service_role;
+
+-- commit;

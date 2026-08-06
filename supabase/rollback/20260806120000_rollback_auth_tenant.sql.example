@@ -1,0 +1,67 @@
+-- ROLLBACK Sprint 2 — Auth / Tenant
+-- EXEMPLO. NÃO EXECUTAR sem autorização explícita.
+-- Remove objetos criados por:
+--   20260806120000_init_auth_tenant.sql
+--   20260806120100_profile_update_guard.sql
+-- Não remove usuários de auth.users.
+-- Apaga dados em organizations/profiles/members/audit_logs.
+
+-- begin;
+
+-- ---------------------------------------------------------------------------
+-- 1) Policies
+-- ---------------------------------------------------------------------------
+-- drop policy if exists organizations_select_member on public.organizations;
+-- drop policy if exists organizations_update_admin on public.organizations;
+-- drop policy if exists profiles_select_self on public.profiles;
+-- drop policy if exists profiles_select_org_admin on public.profiles;
+-- drop policy if exists profiles_update_self on public.profiles;
+-- drop policy if exists members_select_self on public.organization_members;
+-- drop policy if exists members_select_admin on public.organization_members;
+-- drop policy if exists members_select_operator_readonly on public.organization_members;
+-- drop policy if exists audit_logs_select_admin on public.audit_logs;
+
+-- ---------------------------------------------------------------------------
+-- 2) Triggers
+-- ---------------------------------------------------------------------------
+-- drop trigger if exists organizations_set_updated_at on public.organizations;
+-- drop trigger if exists profiles_set_updated_at on public.profiles;
+-- drop trigger if exists organization_members_set_updated_at on public.organization_members;
+-- drop trigger if exists organization_members_audit on public.organization_members;
+-- drop trigger if exists profiles_enforce_self_update on public.profiles;
+-- drop trigger if exists on_auth_user_created on auth.users;
+
+-- ---------------------------------------------------------------------------
+-- 3) Functions
+-- ---------------------------------------------------------------------------
+-- drop function if exists public.enforce_profile_self_update();
+-- drop function if exists public.audit_organization_member_changes();
+-- drop function if exists public.handle_new_user();
+-- drop function if exists public.is_active_member_of_any_org();
+-- drop function if exists public.is_org_admin(uuid);
+-- drop function if exists public.has_org_role(uuid, public.app_role[]);
+-- drop function if exists public.has_active_membership(uuid);
+-- drop function if exists public.set_updated_at();
+
+-- ---------------------------------------------------------------------------
+-- 4) Tables (ordem por FKs)
+-- ---------------------------------------------------------------------------
+-- drop table if exists public.audit_logs;
+-- drop table if exists public.organization_members;
+-- drop table if exists public.profiles;
+-- drop table if exists public.organizations;
+
+-- ---------------------------------------------------------------------------
+-- 5) Enums
+-- ---------------------------------------------------------------------------
+-- drop type if exists public.app_role;
+-- drop type if exists public.membership_status;
+-- drop type if exists public.organization_status;
+
+-- ---------------------------------------------------------------------------
+-- 6) Registro de migrations no CLI
+-- Após rollback manual, alinhar histórico com o processo oficial do Supabase CLI
+-- (ex.: migration repair) — não inventar deletes em schema_migrations sem revisão.
+-- ---------------------------------------------------------------------------
+
+-- commit;

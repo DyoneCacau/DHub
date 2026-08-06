@@ -29,6 +29,10 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D23 | 2026-08-06 | Proposta consolidada de estados de contrato **sem** `submitted` (envio → `awaiting_review`) | Ver `CONTRACT_WORKFLOW.md`; ajustes futuros após levantamento (Q14, Q15) |
 | D24 | 2026-08-06 | Proposta consolidada: `processed` = processada/registrada; `completed` = ciclo administrativo finalizado com comprovante/encerramento | Ver `RECHARGE_WORKFLOW.md`; validação operacional Q07/Q10 |
 | D25 | 2026-08-06 | Permissões de trilha: admin acessa auditoria técnica + históricos; operador acessa históricos operacionais necessários, **sem** auditoria técnica completa nem eventos de segurança/admin; consultor só históricos autorizados do próprio escopo, **sem** auditoria técnica | Ver `AUTHORIZATION_AND_RLS.md` |
+| D26 | 2026-08-06 | Frontend usa somente publishable key; nunca service_role/sb_secret/senha/connection string no client | `src/lib/supabase.ts` |
+| D27 | 2026-08-06 | Sem cadastro público; bootstrap do primeiro admin via Auth Dashboard + SQL revisado | `docs/SUPABASE_SETUP.md` |
+| D28 | 2026-08-06 | Papel e org vêm de `organization_members` no banco (não de metadata/localStorage) | AuthProvider + RLS |
+| D29 | 2026-08-06 | Lista de membros na UI é somente leitura nesta sprint; alteração de papel via RPC fica para depois | `/configuracoes/usuarios` |
 
 ## Classificação (obrigatória nos docs)
 

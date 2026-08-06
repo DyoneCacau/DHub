@@ -1,7 +1,11 @@
 import { NavLink } from "react-router-dom";
 
 import { Separator } from "@/components/ui/separator";
-import { isNavigationItemActive, navigationItems } from "@/config/navigation";
+import {
+  getNavigationForRole,
+  isNavigationItemActive,
+} from "@/config/navigation";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 interface AppSidebarProps {
@@ -10,6 +14,9 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ pathname, className }: AppSidebarProps) {
+  const { role } = useAuth();
+  const items = getNavigationForRole(role);
+
   return (
     <aside
       className={cn(
@@ -24,7 +31,7 @@ export function AppSidebar({ pathname, className }: AppSidebarProps) {
       </div>
       <Separator />
       <nav className="flex-1 space-y-1 p-3" aria-label="Menu lateral">
-        {navigationItems.map((item) => {
+        {items.map((item) => {
           const Icon = item.icon;
           const active = isNavigationItemActive(pathname, item);
           return (
@@ -46,8 +53,8 @@ export function AppSidebar({ pathname, className }: AppSidebarProps) {
         })}
       </nav>
       <div className="border-t border-sidebar-border p-4">
-        <p className="text-xs text-muted-foreground">Sprint 1 — fundação visual</p>
-        <p className="text-xs text-muted-foreground">Sem dados reais conectados</p>
+        <p className="text-xs text-muted-foreground">Acesso por membership ativa</p>
+        <p className="text-xs text-muted-foreground">Autorização reforçada por RLS</p>
       </div>
     </aside>
   );

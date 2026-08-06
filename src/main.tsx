@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { App } from "@/app/app";
-import { AppProviders } from "@/app/providers/app-providers";
+import { envBootstrap } from "@/config/env";
+import { ConfigErrorState } from "@/features/auth/components/auth-states";
 
 import "@/styles/globals.css";
 
@@ -12,10 +12,16 @@ if (!rootElement) {
   throw new Error("Elemento #root não encontrado");
 }
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <AppProviders>
-      <App />
-    </AppProviders>
-  </StrictMode>,
-);
+const root = createRoot(rootElement);
+
+if (!envBootstrap.ok) {
+  root.render(
+    <StrictMode>
+      <ConfigErrorState message={envBootstrap.message} />
+    </StrictMode>,
+  );
+} else {
+  void import("@/app/bootstrap").then(({ mountApp }) => {
+    mountApp(root);
+  });
+}

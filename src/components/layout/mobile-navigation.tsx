@@ -6,7 +6,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { isNavigationItemActive, navigationItems } from "@/config/navigation";
+import {
+  getNavigationForRole,
+  isNavigationItemActive,
+} from "@/config/navigation";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 interface MobileNavigationProps {
@@ -20,6 +24,9 @@ export function MobileNavigation({
   onOpenChange,
   pathname,
 }: MobileNavigationProps) {
+  const { role } = useAuth();
+  const items = getNavigationForRole(role);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="flex flex-col p-0">
@@ -27,7 +34,7 @@ export function MobileNavigation({
           <SheetTitle>DHub</SheetTitle>
         </SheetHeader>
         <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label="Menu mobile">
-          {navigationItems.map((item) => {
+          {items.map((item) => {
             const Icon = item.icon;
             const active = isNavigationItemActive(pathname, item);
             return (
