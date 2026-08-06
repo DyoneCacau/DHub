@@ -1,3 +1,6 @@
 # Gerado pelo CLI — não versionar
 .temp/
 .branches/
+
+# Bootstrap operacional com UUID real — nunca versionar
+bootstrap/*.local.sql
