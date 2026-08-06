@@ -1,0 +1,33 @@
+# DHub — Questões em Aberto
+
+Dúvidas **não confirmadas**. Não responder por suposição. Atualizar quando o negócio decidir; promover decisões para `DECISION_LOG.md`.
+
+| ID | Pergunta | Impacto | Status |
+|----|----------|---------|--------|
+| Q01 | Um lojista pode ter mais de um contrato com a mesma operadora? Inclui: vários ativos; contratos por plano; renovação; substituição; histórico de inativos? Deve existir índice parcial ou regra só para “contrato ativo”? | Constraints/índices em `contracts`; UX. **Não** há unique `merchant_id+operator_id` confirmado | Aberta |
+| Q02 | Qual a relação exata entre **plano** e **contrato**? (obrigatório? 1:1? mudável?) | FK `operator_plan_id`; configuração de campos/docs | Aberta |
+| Q03 | Quais são os **campos obrigatórios** por operadora/plano? | `field_definitions` / validação | Aberta |
+| Q04 | Quais **documentos** são obrigatórios por operadora/plano? | Uploads e bloqueio de transição | Aberta |
+| Q05 | Quais são os **prazos** operacionais (conferência, pendência, recarga)? | `due_at`, SLAs, dashboards | Aberta |
+| Q06 | Prazos em **dias úteis** ou **corridos**? | Cálculo de vencimento | Aberta |
+| Q07 | Qual o **fluxo real da recarga** hoje (passos, sistemas externos, comprovantes)? A proposta `processed`≠`completed` reflete a operação? | Validação do workflow de recarga | Aberta |
+| Q08 | Quais **dados** existem nas ~15 planilhas e qual o mapeamento para entidades? | Importação; modelo de dados | Aberta |
+| Q09 | Existem **regras de despesas** dos consultores no escopo do DHub? | Módulo futuro ou fora | Aberta |
+| Q10 | Qual o **formato** e a obrigatoriedade dos comprovantes de recarga para `completed`? | `recharge_receipts`; bloqueio de encerramento | Aberta |
+| Q11 | Qual a **origem e destino** dos relatórios das operadoras? | Integrações; conciliação | Aberta |
+| Q12 | Quais as **regras de mudança de consultor** do lojista (quem autoriza, efeito em contratos abertos / snapshot)? | History + RLS | Aberta |
+| Q13 | Há necessidade de **importação histórica** (planilhas/Dropbox) no go-live? | Escopo sprints 9+ | Aberta |
+| Q14 | A remoção de `submitted` (envio → `awaiting_review`) atende a operação, ou existe etapa distinta de “enviado” vs “em fila”? | Workflow de contrato | Aberta (proposta consolidada remove `submitted`; validar com operação) |
+| Q15 | O estado `corrected` é necessário ou basta voltar para `awaiting_review`? | Workflow de contrato | Aberta |
+| Q16 | Recarga só é permitida com contrato em `active`, ou também em outros status? | Pré-condição de criação | Aberta |
+| Q17 | Qual o **critério de unicidade** do lojista (CNPJ, CPF, outro)? | Constraints; deduplicação | Aberta |
+| Q18 | Quais **relatórios operacionais** o operador deve ver? (Auditoria técnica: **não** — consolidado na Sprint 0.1) | Menus e RLS de relatórios | Aberta (escopo de relatórios); auditoria técnica fechada como negada ao operador |
+| Q19 | Consultor pode **cancelar** contrato/recarga após envio? Em quais estados? | Transições e policies | Aberta |
+| Q20 | Reativação `inactive` → `active` é permitida? | Workflow | Aberta |
+
+## Como usar
+
+1. Levar a pergunta ao stakeholder da Prime Service.
+2. Registrar a resposta e a data em `DECISION_LOG.md`.
+3. Atualizar status aqui para `Respondida` com referência à decisão.
+4. Ajustar docs de domínio/workflow/DB impactados.

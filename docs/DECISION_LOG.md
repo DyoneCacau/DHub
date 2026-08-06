@@ -1,0 +1,40 @@
+# DHub — Decision Log
+
+Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de workflow/`OPEN_QUESTIONS.md`.
+
+| ID | Data | Decisão | Implicações |
+|----|------|---------|-------------|
+| D01 | 2026-08-06 | Nome do sistema: **DHub** | Branding, docs, repositório |
+| D02 | 2026-08-06 | Lojista cadastrado **uma única vez** por organização | Sem duplicar lojista por operadora; critério de chave de negócio em Q17 |
+| D03 | 2026-08-06 | Um consultor pode possuir **vários** lojistas | Modelo 1:N consultant→merchants |
+| D04 | 2026-08-06 | Um lojista pode possuir **vários** contratos | Não implica unique por operadora (Q01) |
+| D05 | 2026-08-06 | **Contrato separado de recarga** | Tabelas, status, históricos e regras distintos |
+| D06 | 2026-08-06 | Lojista **sem acesso** no MVP | Sem role/login de lojista |
+| D07 | 2026-08-06 | **Base única** (não 15 módulos = 15 planilhas) | Configuração + domínio unificado |
+| D08 | 2026-08-06 | Regras de operadoras **configuráveis** | Campos, documentos, planos, prazos, pendências em dados |
+| D09 | 2026-08-06 | Integrações **somente após** o fluxo interno | Dropbox, n8n, Suri/WhatsApp pós-núcleo |
+| D10 | 2026-08-06 | Uso planejado de **Supabase** (Postgres, Auth, RLS) | Sprint 2+ |
+| D11 | 2026-08-06 | Uso futuro de **n8n, Dropbox e Suri** | Sprints 9–11 |
+| D12 | 2026-08-06 | Operadoras iniciais: LeCard, Pluxee, Ticket, VR, ValeCard | Seeds de configuração (não tabelas físicas separadas) |
+| D13 | 2026-08-06 | Fluxo oficial: Consultor → Lojista → Contrato por operadora → Conferência → Recargas | Base de todos os docs |
+| D14 | 2026-08-06 | Perfis MVP: admin, operator, consultant | Membership + RLS |
+| D15 | 2026-08-06 | Autorização **não só no frontend**; RLS no banco | Sprint 2 |
+| D16 | 2026-08-06 | Stack frontend: React, TS, Vite, Tailwind, shadcn/ui, RHF, Zod, TanStack Query, Router; deploy Vercel | Sprint 1+ |
+| D17 | 2026-08-06 | Toda entidade operacional pertence a uma **organização** | Multi-tenant |
+| D18 | 2026-08-06 | Toda alteração relevante gera **histórico e auditoria** | History operacional + `audit_logs` (trilhas distintas) |
+| D19 | 2026-08-06 | Consultor **não acessa** dados de outro consultor | Predicado RLS de ownership |
+| D20 | 2026-08-06 | Não criar tabela separada por operadora | `operators` + config |
+| D21 | 2026-08-06 | Sprint 0/0.1 apenas documentação; sem app/SQL/commit | Restrições da sprint |
+| D22 | 2026-08-06 | **Não** adotar constraint exclusiva rígida `merchant_id + operator_id` nesta etapa | Unicidade/renovação/planos permanecem em Q01; sem SQL |
+| D23 | 2026-08-06 | Proposta consolidada de estados de contrato **sem** `submitted` (envio → `awaiting_review`) | Ver `CONTRACT_WORKFLOW.md`; ajustes futuros após levantamento (Q14, Q15) |
+| D24 | 2026-08-06 | Proposta consolidada: `processed` = processada/registrada; `completed` = ciclo administrativo finalizado com comprovante/encerramento | Ver `RECHARGE_WORKFLOW.md`; validação operacional Q07/Q10 |
+| D25 | 2026-08-06 | Permissões de trilha: admin acessa auditoria técnica + históricos; operador acessa históricos operacionais necessários, **sem** auditoria técnica completa nem eventos de segurança/admin; consultor só históricos autorizados do próprio escopo, **sem** auditoria técnica | Ver `AUTHORIZATION_AND_RLS.md` |
+
+## Classificação (obrigatória nos docs)
+
+| Tipo | Onde fica |
+|------|-----------|
+| Decisão confirmada | Este arquivo |
+| Proposta arquitetural | Workflows, DB proposal, RLS (rotuladas) |
+| Hipótese | Explicitamente marcada; não vira regra |
+| Questão aberta | `OPEN_QUESTIONS.md` |

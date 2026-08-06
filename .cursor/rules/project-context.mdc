@@ -1,0 +1,52 @@
+---
+description: Contexto global do DHub — domínio, modelo, stack e regras de desenvolvimento
+alwaysApply: true
+---
+
+# CONTEXTO GLOBAL — DHUB
+
+O DHub é uma plataforma operacional para a Prime Service.
+
+A Prime Service trabalha com contratos e recargas de vouchers das operadoras: LeCard, Pluxee, Ticket, VR e ValeCard.
+
+Operação aproximada: ~3.000 solicitações/mês; ≥50/dia; 30 consultores; 5 admins; 5 WhatsApps; 15 planilhas; documentos no Dropbox.
+
+## Participantes
+
+- **Consultor**: contato com o lojista; envia documentos ao escritório. Pode ter vários lojistas.
+- **Lojista**: cliente final que assina contratos. No MVP não acessa o sistema nem fala com o escritório. Cadastrado uma única vez.
+- **Operadora**: LeCard, Pluxee, Ticket, VR, ValeCard.
+- **Escritório**: recebe contratos, confere documentos, cadastra, registra pendências, processa e controla recargas.
+
+## Modelo central
+
+`Consultor → Lojista → Contrato por operadora → Conferência → Recargas`
+
+Um lojista pode ter vários contratos. A quantidade por operadora (um ou mais, ativos/inativos, por plano, renovação) **não** está confirmada — ver docs/OPEN_QUESTIONS.md.
+
+**Separação obrigatória:** Contrato ≠ Recarga. Contrato = vínculo lojista↔operadora. Recarga = movimentação dentro de um contrato. Um contrato pode ter várias recargas.
+
+## Regras importantes
+
+- Não duplicar lojista por operadora.
+- Não criar tabela separada por operadora.
+- Não reproduzir as 15 planilhas como 15 módulos.
+- Regras das operadoras configuráveis (campos, documentos, planos, prazos, pendências — não fixos no código).
+- Consultor só acessa seus próprios lojistas, contratos e recargas.
+- Admins/operadores acessam conforme permissões.
+- Toda alteração relevante gera histórico e auditoria.
+
+## Stack
+
+React, TypeScript, Vite, Tailwind CSS, shadcn/ui, React Router, React Hook Form, Zod, TanStack Query, Supabase, PostgreSQL, Supabase Auth, RLS, Vercel.
+
+Posteriormente: n8n, Dropbox, Suri/WhatsApp.
+
+## Regras de desenvolvimento
+
+- Uma sprint por vez; não implementar fora da sprint atual.
+- Não inventar informações de negócio; registrar dúvidas em documentação.
+- TypeScript estrito; validar entradas com Zod.
+- Autorização não só no frontend — implementar RLS no banco.
+- Não commit/push sem autorização.
+- Ao final de cada sprint: lint, typecheck e build; informar arquivos criados e modificados.
