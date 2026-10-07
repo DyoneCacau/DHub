@@ -131,3 +131,12 @@ Ver `docs/OPERATORS_AND_REGIONS.md` e migration `20261007120000_operators_region
 
 - `operators`/`regions`: SELECT para membros ativos; INSERT/UPDATE só admin; sem DELETE.
 - `consultant_operators`/`consultant_regions`: admin/operator leem, inserem e removem na org; consultant lê só os próprios; FKs compostas garantem mesmo tenant.
+
+## Sprint 5 — Operações e Ações
+
+Ver `docs/OPERATIONS_AND_ACTIONS.md` e migration `20261007130000_operations_actions.sql`.
+
+- `expense_types`, `actions`, `action_participants`, `action_expenses`, `expense_attachments` e views: **somente admin** (`is_org_admin`); operator e consultant sem acesso (Q22).
+- INSERT exige org ativa (`current_active_organization_id()`); campos de criação forçados por trigger; colunas imutáveis protegidas.
+- Sem DELETE em ações, despesas e tipos (cancelamento/inativação por status); DELETE só em participantes e comprovantes.
+- Bucket privado `action-receipts`: policies em `storage.objects` exigem bucket, pasta raiz = org ativa e admin; download por URL assinada (60 s).

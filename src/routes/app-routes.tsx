@@ -63,6 +63,13 @@ const ContractDetailPage = lazyNamed(
 const RechargesPage = lazyNamed(() => import("@/pages/recharges-page"), "RechargesPage");
 const OperatorsPage = lazyNamed(() => import("@/pages/operators-page"), "OperatorsPage");
 const RegionsPage = lazyNamed(() => import("@/pages/regions-page"), "RegionsPage");
+const ActionsPage = lazyNamed(() => import("@/pages/actions-page"), "ActionsPage");
+const ActionFormPage = lazyNamed(() => import("@/pages/action-form-page"), "ActionFormPage");
+const ActionDetailPage = lazyNamed(() => import("@/pages/action-detail-page"), "ActionDetailPage");
+const ExpenseTypesPage = lazyNamed(
+  () => import("@/pages/expense-types-page"),
+  "ExpenseTypesPage",
+);
 const ReportsPage = lazyNamed(() => import("@/pages/reports-page"), "ReportsPage");
 const SettingsPage = lazyNamed(() => import("@/pages/settings-page"), "SettingsPage");
 const SettingsUsersPage = lazyNamed(
@@ -157,6 +164,11 @@ export function AppRoutes() {
             <Route element={<RequireRole roles={["admin"]} />}>
               <Route path="/operadoras" element={withPageSuspense(OperatorsPage)} />
               <Route path="/regioes" element={withPageSuspense(RegionsPage)} />
+              <Route path="/acoes" element={withPageSuspense(ActionsPage)} />
+              <Route path="/acoes/nova" element={withPageSuspense(ActionFormPage)} />
+              <Route path="/acoes/tipos-despesa" element={withPageSuspense(ExpenseTypesPage)} />
+              <Route path="/acoes/:actionId/editar" element={withPageSuspense(ActionFormPage)} />
+              <Route path="/acoes/:actionId" element={withPageSuspense(ActionDetailPage)} />
               <Route path="/configuracoes" element={withPageSuspense(SettingsPage)} />
               <Route
                 path="/configuracoes/usuarios"

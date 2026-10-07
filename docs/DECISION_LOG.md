@@ -46,6 +46,11 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D40 | 2026-10-07 | Sprint 3 endurecida antes do push: `current_active_organization_id()` retorna null com 0 ou várias memberships (sem `LIMIT 1` arbitrário nem exceção em RLS); vínculo `user_id` só admin (inclusive INSERT) e só para membro ativo; `created_by`/`created_at` forçados no INSERT; documento preserva letras (CNPJ alfanumérico) | Migration `20260806130000` aplicada |
 | D41 | 2026-10-07 | Bandeiras e regiões são **configuração**: escrita só admin; leitura para membros ativos. Vínculos consultor↔bandeira/região geridos por admin/operator | Sprint 4; `OPERATORS_AND_REGIONS.md` |
 | D42 | 2026-10-07 | Planos, campos, tipos de documento e motivos de pendência movidos para a sprint de contratos | `IMPLEMENTATION_PLAN.md` |
+| D43 | 2026-10-07 | Sprint Operações e Ações antecipada (antes de contratos), pois não depende deles | `OPERATIONS_AND_ACTIONS.md` |
+| D44 | 2026-10-07 | Tipos de despesa são catálogo configurável por organização (seeds iniciais), não enum fixo | `expense_types` |
+| D45 | 2026-10-07 | Ações e despesas sem DELETE (cancelamento por status); participantes e comprovantes podem ser removidos pelo admin | RLS + grants |
+| D46 | 2026-10-07 | Comprovantes em bucket privado `action-receipts`, caminho `{org}/actions/{action}/…`, acesso por URL assinada de 60 s; limites provisórios 10 MB e PDF/JPEG/PNG/WEBP | Q27 |
+| D47 | 2026-10-07 | Forma de pagamento da despesa é texto livre com sugestões (sem cadastro de cartões por enquanto) | Q23 |
 
 ## Classificação (obrigatória nos docs)
 

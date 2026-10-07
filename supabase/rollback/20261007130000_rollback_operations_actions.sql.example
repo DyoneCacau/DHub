@@ -1,0 +1,37 @@
+-- ROLLBACK Sprint — Operações e Ações
+-- EXEMPLO. NÃO EXECUTAR sem autorização explícita.
+-- Remove objetos da migration 20261007130000_operations_actions.sql.
+-- NÃO remove consultores, bandeiras, regiões nem registros de audit_logs.
+-- Arquivos no bucket action-receipts precisam ser removidos pela API de Storage antes
+-- (não apagar linhas de storage.objects via SQL).
+-- A entrada em supabase_migrations.schema_migrations não é removida.
+
+-- begin;
+
+-- drop policy if exists action_receipts_select_admin on storage.objects;
+-- drop policy if exists action_receipts_insert_admin on storage.objects;
+-- drop policy if exists action_receipts_delete_admin on storage.objects;
+-- delete from storage.buckets where id = 'action-receipts';  -- somente com o bucket vazio
+
+-- drop view if exists public.action_expense_report;
+-- drop view if exists public.actions_with_totals;
+
+-- drop table if exists public.expense_attachments;
+-- drop table if exists public.action_expenses;
+-- drop table if exists public.action_participants;
+-- drop table if exists public.actions;
+-- drop table if exists public.expense_types;
+
+-- drop function if exists public.audit_child_row_changes();
+-- drop function if exists public.audit_row_changes();
+-- drop function if exists public.enforce_expense_attachment_path();
+-- drop function if exists public.enforce_action_expense_rules();
+-- drop function if exists public.enforce_org_child_insert_rules();
+-- drop function if exists public.normalize_action_expense_row();
+-- drop function if exists public.normalize_action_row();
+-- drop function if exists public.normalize_expense_type_row();
+
+-- drop type if exists public.expense_status;
+-- drop type if exists public.action_status;
+
+-- commit;

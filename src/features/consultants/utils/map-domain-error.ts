@@ -13,6 +13,12 @@ const FRIENDLY: Array<{ match: RegExp; message: string }> = [
   { match: /consultant_operators_pkey|consultant_regions_pkey/i, message: "Este vínculo já existe." },
   { match: /Bandeira inativa/i, message: "Selecione uma bandeira ativa." },
   { match: /Região inativa/i, message: "Selecione uma região ativa." },
+  { match: /expense_types_org_name_uidx/i, message: "Já existe um tipo de despesa com este nome." },
+  { match: /action_participants_pkey/i, message: "Este consultor já participa da ação." },
+  { match: /Tipo de despesa inativo/i, message: "Selecione um tipo de despesa ativo." },
+  { match: /actions_period_valid/i, message: "A data final deve ser igual ou posterior ao início." },
+  { match: /expense_attachments_mime_allowed|mime type .* is not supported/i, message: "Formato não permitido. Envie PDF, JPG, PNG ou WEBP." },
+  { match: /expense_attachments_size_valid|exceeded the maximum allowed size|Payload too large/i, message: "Arquivo acima de 10 MB." },
   { match: /network|fetch/i, message: "Falha de rede. Tente novamente." },
 ];
 

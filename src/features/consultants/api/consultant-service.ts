@@ -159,6 +159,21 @@ export async function listActiveConsultantsForSelect(
   return (data ?? []) as Array<Pick<Consultant, "id" | "full_name" | "status">>;
 }
 
+export async function listConsultantsForSelect(
+  organizationId: string,
+): Promise<Array<Pick<Consultant, "id" | "full_name" | "status">>> {
+  const { data, error } = await supabase
+    .from("consultants")
+    .select("id, full_name, status")
+    .eq("organization_id", organizationId)
+    .order("full_name", { ascending: true });
+
+  if (error) {
+    throw new Error(mapDomainError(error, "Não foi possível carregar consultores."));
+  }
+  return (data ?? []) as Array<Pick<Consultant, "id" | "full_name" | "status">>;
+}
+
 export async function listLinkableMembers(organizationId: string): Promise<
   Array<{ member: OrganizationMember; profile: Profile | null }>
 > {

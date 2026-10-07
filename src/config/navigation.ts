@@ -4,6 +4,7 @@ import {
   FileText,
   LayoutDashboard,
   MapPin,
+  Plane,
   RefreshCw,
   Settings,
   Store,
@@ -54,6 +55,14 @@ export const navigationItems: NavigationItem[] = [
     path: "/recargas",
     icon: RefreshCw,
     roles: ALL_ROLES,
+  },
+  {
+    id: "actions",
+    label: "Operações e Ações",
+    path: "/acoes",
+    icon: Plane,
+    matchPrefix: "/acoes",
+    roles: ["admin"],
   },
   {
     id: "operators",
@@ -130,6 +139,14 @@ export const pageMetaByPath: Record<string, PageMeta> = {
     title: "Bandeiras",
     description: "Operadoras de voucher atendidas pela organização",
   },
+  "/acoes": {
+    title: "Operações e Ações",
+    description: "Ações de bandeira, viagens e despesas",
+  },
+  "/acoes/tipos-despesa": {
+    title: "Tipos de despesa",
+    description: "Categorias das despesas das ações",
+  },
   "/regioes": {
     title: "Regiões",
     description: "Regiões e cidades atendidas pelos consultores",
@@ -173,6 +190,13 @@ export function resolvePageMeta(pathname: string): PageMeta {
     return {
       title: "Detalhe do lojista",
       description: "Cadastro e vínculo com consultor",
+    };
+  }
+
+  if (pathname.startsWith("/acoes/")) {
+    return {
+      title: "Ação",
+      description: "Participantes, despesas e comprovantes",
     };
   }
 
