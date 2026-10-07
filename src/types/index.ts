@@ -9,6 +9,7 @@ export type NavigationItemId =
   | "contracts"
   | "recharges"
   | "operators"
+  | "regions"
   | "reports"
   | "settings"
   | "settings-users"

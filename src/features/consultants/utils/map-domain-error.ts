@@ -8,6 +8,11 @@ const FRIENDLY: Array<{ match: RegExp; message: string }> = [
   { match: /não pode transferir|Somente administrador/i, message: "Operação não permitida para o seu papel." },
   { match: /membro ativo da organização/i, message: "O usuário vinculado precisa ser membro ativo da organização." },
   { match: /Organização ativa indefinida/i, message: "Não foi possível identificar sua organização ativa. Contate o administrador." },
+  { match: /operators_org_name_uidx|operators_org_code_unique/i, message: "Já existe uma bandeira com este nome ou código." },
+  { match: /regions_org_name_uidx/i, message: "Já existe uma região com este nome." },
+  { match: /consultant_operators_pkey|consultant_regions_pkey/i, message: "Este vínculo já existe." },
+  { match: /Bandeira inativa/i, message: "Selecione uma bandeira ativa." },
+  { match: /Região inativa/i, message: "Selecione uma região ativa." },
   { match: /network|fetch/i, message: "Falha de rede. Tente novamente." },
 ];
 

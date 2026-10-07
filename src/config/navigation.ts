@@ -3,6 +3,7 @@ import {
   ClipboardList,
   FileText,
   LayoutDashboard,
+  MapPin,
   RefreshCw,
   Settings,
   Store,
@@ -56,9 +57,16 @@ export const navigationItems: NavigationItem[] = [
   },
   {
     id: "operators",
-    label: "Operadoras",
+    label: "Bandeiras",
     path: "/operadoras",
     icon: Building2,
+    roles: ["admin"],
+  },
+  {
+    id: "regions",
+    label: "Regiões",
+    path: "/regioes",
+    icon: MapPin,
     roles: ["admin"],
   },
   {
@@ -119,8 +127,12 @@ export const pageMetaByPath: Record<string, PageMeta> = {
     description: "Movimentações vinculadas a contratos",
   },
   "/operadoras": {
-    title: "Operadoras",
-    description: "Configuração local demonstrativa",
+    title: "Bandeiras",
+    description: "Operadoras de voucher atendidas pela organização",
+  },
+  "/regioes": {
+    title: "Regiões",
+    description: "Regiões e cidades atendidas pelos consultores",
   },
   "/relatorios": {
     title: "Relatórios",

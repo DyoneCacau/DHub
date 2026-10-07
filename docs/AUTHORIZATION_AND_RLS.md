@@ -124,3 +124,10 @@ Ver `docs/CONSULTANTS_AND_MERCHANTS.md` e migration `20260806130000_consultants_
 - Admin: gestão completa na org, incluindo vínculo Auth.
 - Sem DELETE pelo client; inativação via `status`.
 - Auditoria técnica (`audit_logs`) continua só SELECT admin; eventos de domínio via triggers.
+
+## Sprint 4 — Bandeiras, regiões e vínculos
+
+Ver `docs/OPERATORS_AND_REGIONS.md` e migration `20261007120000_operators_regions.sql`.
+
+- `operators`/`regions`: SELECT para membros ativos; INSERT/UPDATE só admin; sem DELETE.
+- `consultant_operators`/`consultant_regions`: admin/operator leem, inserem e removem na org; consultant lê só os próprios; FKs compostas garantem mesmo tenant.

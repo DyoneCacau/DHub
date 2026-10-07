@@ -3,6 +3,7 @@ export type MembershipStatus = "active" | "inactive";
 export type OrganizationStatus = "active" | "inactive";
 export type ConsultantStatus = "active" | "inactive";
 export type MerchantStatus = "active" | "inactive";
+export type CatalogStatus = "active" | "inactive";
 
 export type {
   Consultant,
@@ -40,6 +41,46 @@ export interface OrganizationMember {
   status: MembershipStatus;
   created_at: string;
   updated_at: string;
+  created_by: string | null;
+}
+
+export interface Operator {
+  id: string;
+  organization_id: string;
+  name: string;
+  code: string;
+  status: CatalogStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}
+
+export interface Region {
+  id: string;
+  organization_id: string;
+  name: string;
+  state: string | null;
+  status: CatalogStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}
+
+export interface ConsultantOperator {
+  organization_id: string;
+  consultant_id: string;
+  operator_id: string;
+  created_at: string;
+  created_by: string | null;
+}
+
+export interface ConsultantRegion {
+  organization_id: string;
+  consultant_id: string;
+  region_id: string;
+  created_at: string;
   created_by: string | null;
 }
 
@@ -207,6 +248,61 @@ export type Database = {
         };
         Relationships: [];
       };
+      operators: {
+        Row: Operator;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          name: string;
+          code: string;
+          status?: CatalogStatus;
+          notes?: string | null;
+        };
+        Update: {
+          name?: string;
+          status?: CatalogStatus;
+          notes?: string | null;
+        };
+        Relationships: [];
+      };
+      regions: {
+        Row: Region;
+        Insert: {
+          id?: string;
+          organization_id: string;
+          name: string;
+          state?: string | null;
+          status?: CatalogStatus;
+          notes?: string | null;
+        };
+        Update: {
+          name?: string;
+          state?: string | null;
+          status?: CatalogStatus;
+          notes?: string | null;
+        };
+        Relationships: [];
+      };
+      consultant_operators: {
+        Row: ConsultantOperator;
+        Insert: {
+          organization_id: string;
+          consultant_id: string;
+          operator_id: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      consultant_regions: {
+        Row: ConsultantRegion;
+        Insert: {
+          organization_id: string;
+          consultant_id: string;
+          region_id: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
     };
     Views: {
       consultants_with_counts: {
@@ -241,6 +337,7 @@ export type Database = {
       organization_status: OrganizationStatus;
       consultant_status: ConsultantStatus;
       merchant_status: MerchantStatus;
+      catalog_status: CatalogStatus;
     };
     CompositeTypes: {
       [_ in never]: never;

@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { canManageConsultantLinks } from "@/features/catalogs/utils/permissions";
+import { ConsultantLinksCard } from "@/features/consultants/components/consultant-links-card";
 import { consultantQueryKeys } from "@/features/consultants/api/query-keys";
 import {
   getConsultant,
@@ -21,7 +23,7 @@ import {
 
 export function ConsultantDetailPage() {
   const { consultantId } = useParams();
-  const { role } = useAuth();
+  const { organization, role } = useAuth();
   const queryClient = useQueryClient();
   const canManage = canManageConsultants(role);
 
@@ -181,6 +183,12 @@ export function ConsultantDetailPage() {
             </ul>
           </CardContent>
         </Card>
+
+        <ConsultantLinksCard
+          organizationId={organization?.id ?? ""}
+          consultantId={row.id}
+          canManage={canManageConsultantLinks(role)}
+        />
       </div>
     </PageContainer>
   );

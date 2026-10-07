@@ -1,0 +1,24 @@
+-- ROLLBACK Sprint 4 — Bandeiras, regiões e vínculos do consultor
+-- EXEMPLO. NÃO EXECUTAR sem autorização explícita.
+-- Remove objetos da migration 20261007120000_operators_regions.sql.
+-- NÃO remove consultores, lojistas, objetos da Sprint 2 nem registros de audit_logs.
+-- A entrada em supabase_migrations.schema_migrations não é removida.
+
+-- begin;
+
+-- drop table if exists public.consultant_regions;
+-- drop table if exists public.consultant_operators;
+-- drop table if exists public.regions;
+-- drop table if exists public.operators;
+
+-- drop function if exists public.audit_consultant_link_changes();
+-- drop function if exists public.audit_catalog_changes();
+-- drop function if exists public.enforce_consultant_link_rules();
+-- drop function if exists public.enforce_catalog_immutable_columns();
+-- drop function if exists public.enforce_catalog_write_rules();
+-- drop function if exists public.normalize_region_row();
+-- drop function if exists public.normalize_operator_row();
+
+-- drop type if exists public.catalog_status;
+
+-- commit;

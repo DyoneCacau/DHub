@@ -17,6 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { catalogQueryKeys } from "@/features/catalogs/api/query-keys";
+import {
+  listConsultantIdsByFilter,
+  listConsultantLinks,
+  listOperators,
+  listRegions,
+} from "@/features/catalogs/api/catalog-service";
 import { consultantQueryKeys } from "@/features/consultants/api/query-keys";
 import {
   listConsultants,
@@ -40,6 +47,8 @@ export function ConsultantsPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<ConsultantFilters["status"]>("all");
+  const [regionId, setRegionId] = useState<ConsultantFilters["regionId"]>("all");
+  const [operatorId, setOperatorId] = useState<ConsultantFilters["operatorId"]>("all");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -51,15 +60,67 @@ export function ConsultantsPage() {
   }, [searchInput]);
 
   const filters = useMemo<ConsultantFilters>(
-    () => ({ search, status, page, pageSize: PAGE_SIZE }),
-    [search, status, page],
+    () => ({ search, status, regionId, operatorId, page, pageSize: PAGE_SIZE }),
+    [search, status, regionId, operatorId, page],
   );
 
-  const listQuery = useQuery({
-    queryKey: consultantQueryKeys.list(organizationId, filters),
-    queryFn: () => listConsultants(organizationId, filters),
+  const regionsQuery = useQuery({
+    queryKey: catalogQueryKeys.regions(organizationId),
+    queryFn: () => listRegions(organizationId),
     enabled: Boolean(organizationId) && canManage,
   });
+
+  const operatorsQuery = useQuery({
+    queryKey: catalogQueryKeys.operators(organizationId),
+    queryFn: () => listOperators(organizationId),
+    enabled: Boolean(organizationId) && canManage,
+  });
+
+  const regionFilter = regionId === "all" ? null : regionId;
+  const operatorFilter = operatorId === "all" ? null : operatorId;
+
+  const idsQuery = useQuery({
+    queryKey: catalogQueryKeys.consultantIdsByFilter(organizationId, regionId, operatorId),
+    queryFn: () => listConsultantIdsByFilter(organizationId, regionFilter, operatorFilter),
+    enabled: Boolean(organizationId) && canManage,
+  });
+
+  const listQuery = useQuery({
+    queryKey: [...consultantQueryKeys.list(organizationId, filters), idsQuery.data ?? null],
+    queryFn: () => listConsultants(organizationId, filters, idsQuery.data ?? null),
+    enabled: Boolean(organizationId) && canManage && idsQuery.isSuccess,
+  });
+
+  const rowIds = useMemo(() => (listQuery.data?.rows ?? []).map((row) => row.id), [listQuery.data]);
+
+  const linksQuery = useQuery({
+    queryKey: catalogQueryKeys.consultantLinks(rowIds),
+    queryFn: () => listConsultantLinks(rowIds),
+    enabled: rowIds.length > 0,
+  });
+
+  const linkLabels = useMemo(() => {
+    const regionNames = new Map((regionsQuery.data ?? []).map((r) => [r.id, r.name]));
+    const operatorNames = new Map((operatorsQuery.data ?? []).map((o) => [o.id, o.name]));
+    const byConsultant = new Map<string, { regions: string[]; operators: string[] }>();
+    const entry = (id: string) => {
+      let value = byConsultant.get(id);
+      if (!value) {
+        value = { regions: [], operators: [] };
+        byConsultant.set(id, value);
+      }
+      return value;
+    };
+    for (const link of linksQuery.data?.regions ?? []) {
+      const name = regionNames.get(link.region_id);
+      if (name) entry(link.consultant_id).regions.push(name);
+    }
+    for (const link of linksQuery.data?.operators ?? []) {
+      const name = operatorNames.get(link.operator_id);
+      if (name) entry(link.consultant_id).operators.push(name);
+    }
+    return byConsultant;
+  }, [linksQuery.data, regionsQuery.data, operatorsQuery.data]);
 
   const statusMutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: ConsultantStatus }) =>
@@ -96,7 +157,7 @@ export function ConsultantsPage() {
         }
       />
 
-      <div className="mb-4 grid gap-3 md:grid-cols-[1fr_200px]">
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_180px_200px_200px]">
         <Input
           type="search"
           placeholder="Buscar por nome, e-mail ou telefone"
@@ -117,6 +178,44 @@ export function ConsultantsPage() {
             <SelectItem value="all">Todos os status</SelectItem>
             <SelectItem value="active">Ativo</SelectItem>
             <SelectItem value="inactive">Inativo</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={regionId}
+          onValueChange={(value) => {
+            setRegionId(value);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Região" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as regiões</SelectItem>
+            {(regionsQuery.data ?? []).map((region) => (
+              <SelectItem key={region.id} value={region.id}>
+                {region.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={operatorId}
+          onValueChange={(value) => {
+            setOperatorId(value);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Bandeira" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as bandeiras</SelectItem>
+            {(operatorsQuery.data ?? []).map((operator) => (
+              <SelectItem key={operator.id} value={operator.id}>
+                {operator.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -143,11 +242,12 @@ export function ConsultantsPage() {
       {listQuery.data && listQuery.data.rows.length > 0 ? (
         <div className="space-y-4">
           <div className="overflow-x-auto rounded-lg border bg-card">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-[880px] text-left text-sm">
               <thead className="border-b bg-muted/40 text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 font-medium">Nome</th>
                   <th className="px-4 py-3 font-medium">Contato</th>
+                  <th className="px-4 py-3 font-medium">Regiões / Bandeiras</th>
                   <th className="px-4 py-3 font-medium">Usuário</th>
                   <th className="px-4 py-3 font-medium">Lojistas</th>
                   <th className="px-4 py-3 font-medium">Status</th>
@@ -161,6 +261,10 @@ export function ConsultantsPage() {
                     <td className="px-4 py-3 text-muted-foreground">
                       <div>{row.email || "—"}</div>
                       <div>{row.phone || "—"}</div>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      <div>{linkLabels.get(row.id)?.regions.join(", ") || "—"}</div>
+                      <div>{linkLabels.get(row.id)?.operators.join(", ") || "—"}</div>
                     </td>
                     <td className="px-4 py-3">
                       {row.user_id ? (

@@ -39,6 +39,16 @@ export function normalizeText(value: string | null | undefined): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+/** Código estável a partir de um nome: minúsculas, sem acentos, separado por hífen. */
+export function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function emptyToNull(value: string | null | undefined): string | null {
   return normalizeText(value);
 }

@@ -62,6 +62,7 @@ const ContractDetailPage = lazyNamed(
 );
 const RechargesPage = lazyNamed(() => import("@/pages/recharges-page"), "RechargesPage");
 const OperatorsPage = lazyNamed(() => import("@/pages/operators-page"), "OperatorsPage");
+const RegionsPage = lazyNamed(() => import("@/pages/regions-page"), "RegionsPage");
 const ReportsPage = lazyNamed(() => import("@/pages/reports-page"), "ReportsPage");
 const SettingsPage = lazyNamed(() => import("@/pages/settings-page"), "SettingsPage");
 const SettingsUsersPage = lazyNamed(
@@ -155,6 +156,7 @@ export function AppRoutes() {
 
             <Route element={<RequireRole roles={["admin"]} />}>
               <Route path="/operadoras" element={withPageSuspense(OperatorsPage)} />
+              <Route path="/regioes" element={withPageSuspense(RegionsPage)} />
               <Route path="/configuracoes" element={withPageSuspense(SettingsPage)} />
               <Route
                 path="/configuracoes/usuarios"

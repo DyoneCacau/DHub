@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,50 +14,49 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { catalogQueryKeys } from "@/features/catalogs/api/query-keys";
 import {
-  createOperator,
-  listOperators,
-  updateOperator,
+  createRegion,
+  listRegions,
+  updateRegion,
 } from "@/features/catalogs/api/catalog-service";
 import {
-  operatorFormSchema,
-  type OperatorFormValues,
+  regionFormSchema,
+  type RegionFormValues,
 } from "@/features/catalogs/schemas/catalog-schemas";
 import { canManageCatalogs } from "@/features/catalogs/utils/permissions";
-import { slugify } from "@/lib/normalize";
-import type { Operator } from "@/types/database";
+import type { Region } from "@/types/database";
 
-const EMPTY_VALUES: OperatorFormValues = { name: "", code: "", notes: "" };
+const EMPTY_VALUES: RegionFormValues = { name: "", state: "", notes: "" };
 
-export function OperatorsPage() {
+export function RegionsPage() {
   const { organization, role } = useAuth();
   const organizationId = organization?.id ?? "";
   const canManage = canManageCatalogs(role);
   const queryClient = useQueryClient();
-  const [editing, setEditing] = useState<Operator | null>(null);
+  const [editing, setEditing] = useState<Region | null>(null);
 
   const listQuery = useQuery({
-    queryKey: catalogQueryKeys.operators(organizationId),
-    queryFn: () => listOperators(organizationId),
+    queryKey: catalogQueryKeys.regions(organizationId),
+    queryFn: () => listRegions(organizationId),
     enabled: Boolean(organizationId),
   });
 
-  const form = useForm<OperatorFormValues>({
-    resolver: zodResolver(operatorFormSchema),
+  const form = useForm<RegionFormValues>({
+    resolver: zodResolver(regionFormSchema),
     defaultValues: EMPTY_VALUES,
   });
 
   const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: catalogQueryKeys.operators(organizationId) });
+    queryClient.invalidateQueries({ queryKey: catalogQueryKeys.regions(organizationId) });
 
   const saveMutation = useMutation({
-    mutationFn: (values: OperatorFormValues) =>
-      editing
-        ? updateOperator(editing.id, { name: values.name, notes: values.notes || null })
-        : createOperator(organizationId, {
-            name: values.name,
-            code: values.code,
-            notes: values.notes || null,
-          }),
+    mutationFn: (values: RegionFormValues) => {
+      const payload = {
+        name: values.name,
+        state: values.state || null,
+        notes: values.notes || null,
+      };
+      return editing ? updateRegion(editing.id, payload) : createRegion(organizationId, payload);
+    },
     onSuccess: async () => {
       setEditing(null);
       form.reset(EMPTY_VALUES);
@@ -66,17 +65,15 @@ export function OperatorsPage() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: (operator: Operator) =>
-      updateOperator(operator.id, {
-        status: operator.status === "active" ? "inactive" : "active",
-      }),
+    mutationFn: (region: Region) =>
+      updateRegion(region.id, { status: region.status === "active" ? "inactive" : "active" }),
     onSuccess: invalidate,
   });
 
-  const startEdit = (operator: Operator) => {
-    setEditing(operator);
+  const startEdit = (region: Region) => {
+    setEditing(region);
     saveMutation.reset();
-    form.reset({ name: operator.name, code: operator.code, notes: operator.notes ?? "" });
+    form.reset({ name: region.name, state: region.state ?? "", notes: region.notes ?? "" });
   };
 
   const cancelEdit = () => {
@@ -88,7 +85,7 @@ export function OperatorsPage() {
   if (!canManage) {
     return (
       <PageContainer>
-        <EmptyState title="Acesso negado" description="Bandeiras são configuradas pelo administrador." />
+        <EmptyState title="Acesso negado" description="Regiões são configuradas pelo administrador." />
       </PageContainer>
     );
   }
@@ -96,14 +93,14 @@ export function OperatorsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Bandeiras"
-        description="Operadoras de voucher atendidas pela organização. Inative em vez de excluir."
+        title="Regiões"
+        description="Regiões ou cidades atendidas pelos consultores. Inative em vez de excluir."
       />
 
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{editing ? "Editar bandeira" : "Nova bandeira"}</CardTitle>
+            <CardTitle className="text-base">{editing ? "Editar região" : "Nova região"}</CardTitle>
           </CardHeader>
           <CardContent>
             <form
@@ -111,36 +108,24 @@ export function OperatorsPage() {
               onSubmit={form.handleSubmit((values) => saveMutation.mutate(values))}
             >
               <div className="space-y-2">
-                <Label htmlFor="operator-name">Nome</Label>
-                <Input
-                  id="operator-name"
-                  {...form.register("name", {
-                    onChange: (event: ChangeEvent<HTMLInputElement>) => {
-                      if (!editing) {
-                        form.setValue("code", slugify(event.target.value), { shouldValidate: true });
-                      }
-                    },
-                  })}
-                />
+                <Label htmlFor="region-name">Nome (região ou cidade)</Label>
+                <Input id="region-name" {...form.register("name")} />
                 {form.formState.errors.name ? (
                   <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
                 ) : null}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="operator-code">Código</Label>
-                <Input id="operator-code" disabled={Boolean(editing)} {...form.register("code")} />
-                <p className="text-xs text-muted-foreground">
-                  Identificador estável; não pode ser alterado depois de criado.
-                </p>
-                {form.formState.errors.code ? (
-                  <p className="text-sm text-destructive">{form.formState.errors.code.message}</p>
+                <Label htmlFor="region-state">UF (opcional)</Label>
+                <Input id="region-state" maxLength={2} {...form.register("state")} />
+                {form.formState.errors.state ? (
+                  <p className="text-sm text-destructive">{form.formState.errors.state.message}</p>
                 ) : null}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="operator-notes">Observações</Label>
-                <Input id="operator-notes" {...form.register("notes")} />
+                <Label htmlFor="region-notes">Observações</Label>
+                <Input id="region-notes" {...form.register("notes")} />
               </div>
 
               {saveMutation.isError ? (
@@ -153,7 +138,7 @@ export function OperatorsPage() {
 
               <div className="flex gap-2">
                 <Button type="submit" disabled={saveMutation.isPending}>
-                  {editing ? "Salvar" : "Criar bandeira"}
+                  {editing ? "Salvar" : "Criar região"}
                 </Button>
                 {editing ? (
                   <Button type="button" variant="outline" onClick={cancelEdit}>
@@ -167,7 +152,7 @@ export function OperatorsPage() {
 
         <div className="space-y-3">
           {listQuery.isLoading ? (
-            <p className="text-sm text-muted-foreground">Carregando bandeiras…</p>
+            <p className="text-sm text-muted-foreground">Carregando regiões…</p>
           ) : null}
           {listQuery.isError ? (
             <p className="text-sm text-destructive">
@@ -175,7 +160,7 @@ export function OperatorsPage() {
             </p>
           ) : null}
           {listQuery.data && listQuery.data.length === 0 ? (
-            <EmptyState title="Nenhuma bandeira" description="Cadastre a primeira bandeira." />
+            <EmptyState title="Nenhuma região" description="Cadastre a primeira região ou cidade." />
           ) : null}
           {listQuery.data && listQuery.data.length > 0 ? (
             <div className="overflow-x-auto rounded-lg border bg-card">
@@ -183,31 +168,31 @@ export function OperatorsPage() {
                 <thead className="border-b bg-muted/40 text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Nome</th>
-                    <th className="px-4 py-3 font-medium">Código</th>
+                    <th className="px-4 py-3 font-medium">UF</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {listQuery.data.map((operator) => (
-                    <tr key={operator.id} className="border-b last:border-0">
+                  {listQuery.data.map((region) => (
+                    <tr key={region.id} className="border-b last:border-0">
                       <td className="px-4 py-3 font-medium">
-                        {operator.name}
-                        {operator.notes ? (
+                        {region.name}
+                        {region.notes ? (
                           <div className="text-xs font-normal text-muted-foreground">
-                            {operator.notes}
+                            {region.notes}
                           </div>
                         ) : null}
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">{operator.code}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{region.state || "—"}</td>
                       <td className="px-4 py-3">
-                        <Badge variant={operator.status === "active" ? "default" : "outline"}>
-                          {operator.status === "active" ? "Ativa" : "Inativa"}
+                        <Badge variant={region.status === "active" ? "default" : "outline"}>
+                          {region.status === "active" ? "Ativa" : "Inativa"}
                         </Badge>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" variant="outline" onClick={() => startEdit(operator)}>
+                          <Button size="sm" variant="outline" onClick={() => startEdit(region)}>
                             Editar
                           </Button>
                           <Button
@@ -215,13 +200,13 @@ export function OperatorsPage() {
                             variant="ghost"
                             disabled={statusMutation.isPending}
                             onClick={() => {
-                              const label = operator.status === "active" ? "inativar" : "ativar";
-                              if (window.confirm(`Confirma ${label} a bandeira ${operator.name}?`)) {
-                                statusMutation.mutate(operator);
+                              const label = region.status === "active" ? "inativar" : "ativar";
+                              if (window.confirm(`Confirma ${label} a região ${region.name}?`)) {
+                                statusMutation.mutate(region);
                               }
                             }}
                           >
-                            {operator.status === "active" ? "Inativar" : "Ativar"}
+                            {region.status === "active" ? "Inativar" : "Ativar"}
                           </Button>
                         </div>
                       </td>

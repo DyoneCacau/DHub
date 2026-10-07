@@ -43,6 +43,9 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D37 | 2026-10-07 | Módulo **Operações e Ações** no escopo: ações de bandeira com viagens e despesas (passagens, aluguel de carro, combustível, recarga de cartões, contas) | Responde Q09 |
 | D38 | 2026-10-07 | Somente **admin (gerente)** cria/gerencia ações e despesas | RLS `is_org_admin`; operator e consultant sem acesso (Q22) |
 | D39 | 2026-10-07 | Existem **cartão combustível/frota** e **cartão corporativo pré-pago** | Tipos de despesa distintos; cadastro de cartões em Q23 |
+| D40 | 2026-10-07 | Sprint 3 endurecida antes do push: `current_active_organization_id()` retorna null com 0 ou várias memberships (sem `LIMIT 1` arbitrário nem exceção em RLS); vínculo `user_id` só admin (inclusive INSERT) e só para membro ativo; `created_by`/`created_at` forçados no INSERT; documento preserva letras (CNPJ alfanumérico) | Migration `20260806130000` aplicada |
+| D41 | 2026-10-07 | Bandeiras e regiões são **configuração**: escrita só admin; leitura para membros ativos. Vínculos consultor↔bandeira/região geridos por admin/operator | Sprint 4; `OPERATORS_AND_REGIONS.md` |
+| D42 | 2026-10-07 | Planos, campos, tipos de documento e motivos de pendência movidos para a sprint de contratos | `IMPLEMENTATION_PLAN.md` |
 
 ## Classificação (obrigatória nos docs)
 

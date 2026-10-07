@@ -32,9 +32,14 @@ function escapeIlike(term: string): string {
 export async function listConsultants(
   organizationId: string,
   filters: ConsultantFilters,
+  restrictToIds: string[] | null = null,
 ): Promise<PaginatedResult<ConsultantListItem>> {
   const from = (filters.page - 1) * filters.pageSize;
   const to = from + filters.pageSize - 1;
+
+  if (restrictToIds && restrictToIds.length === 0) {
+    return { rows: [], total: 0, page: filters.page, pageSize: filters.pageSize };
+  }
 
   let query = supabase
     .from("consultants_with_counts")
@@ -45,6 +50,10 @@ export async function listConsultants(
 
   if (filters.status !== "all") {
     query = query.eq("status", filters.status);
+  }
+
+  if (restrictToIds) {
+    query = query.in("id", restrictToIds);
   }
 
   const term = filters.search.trim();

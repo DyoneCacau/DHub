@@ -24,6 +24,8 @@ export interface ConsultantListItem extends Consultant {
 export interface ConsultantFilters {
   search: string;
   status: ConsultantStatus | "all";
+  regionId: string | "all";
+  operatorId: string | "all";
   page: number;
   pageSize: number;
 }
