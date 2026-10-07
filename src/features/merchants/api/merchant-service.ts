@@ -127,6 +127,32 @@ export async function listMerchants(
   };
 }
 
+export interface MerchantOption {
+  id: string;
+  legal_name: string;
+  trade_name: string | null;
+  document: string | null;
+  city: string | null;
+  state: string | null;
+  status: MerchantStatus;
+}
+
+export async function listMerchantsForSelect(
+  organizationId: string,
+  consultantId: string,
+): Promise<MerchantOption[]> {
+  const { data, error } = await supabase
+    .from("merchants")
+    .select("id, legal_name, trade_name, document, city, state, status")
+    .eq("organization_id", organizationId)
+    .eq("consultant_id", consultantId)
+    .order("legal_name", { ascending: true });
+  if (error) {
+    throw new Error(mapDomainError(error, "Não foi possível listar lojistas do consultor."));
+  }
+  return (data ?? []) as MerchantOption[];
+}
+
 export async function getMerchant(id: string): Promise<MerchantListItem | null> {
   const { data, error } = await supabase.from("merchants").select("*").eq("id", id).maybeSingle();
   if (error) {

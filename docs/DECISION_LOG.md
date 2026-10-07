@@ -58,6 +58,13 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D52 | 2026-10-07 | Novos tipos de despesa: Hospedagem / Hotel, Alimentação, Táxi / Uber / transporte local | Migration `20261007150000` |
 | D53 | 2026-10-07 | Despesa guarda dados de viagem: período (início/fim), origem, destino e código da reserva | Campos opcionais em `action_expenses` |
 | D54 | 2026-10-07 | Toda despesa pertence a uma ação (sem despesa avulsa); tela geral `/despesas` consolida todas, só admin | `OPERATIONS_AND_ACTIONS.md` |
+| D55 | 2026-10-07 | Na fase 1, só o **escritório** (admin/operator) sobe contratos e documentos; consultor continua mandando pelo WhatsApp e não acessa contratos no sistema | RLS só admin/operator; login do consultor fica para a fase 2. `CONTRACTS_AND_DOCUMENTS.md` |
+| D56 | 2026-10-07 | Os WhatsApps do escritório são separados **por bandeira** | `intake_channels` com bandeira padrão; escolher o canal pré-preenche a bandeira |
+| D57 | 2026-10-07 | Consultor e região do contrato são derivados do lojista no momento do cadastro (snapshot) | Trigger `enforce_contract_rules`; trocar o consultor do lojista não move contratos antigos de pasta (decisão técnica, revisável) |
+| D58 | 2026-10-07 | `corrected` pode ser aprovado/rejeitado direto, sem voltar a `awaiting_review` | Ajuste técnico ao `CONTRACT_WORKFLOW.md`; Q15 segue aberta para validação com a operação |
+| D59 | 2026-10-07 | Documentos de contrato nunca são excluídos; arquivo errado é **descartado** com motivo | Sem DELETE; `discarded_at/by/reason`; storage só remove upload órfão |
+| D60 | 2026-10-07 | Contrato sem unique lojista + bandeira e com plano em texto livre opcional | Mantém D22/Q01 e Q02 em aberto; UI só avisa contrato em aberto para o mesmo par |
+| D61 | 2026-10-07 | Arquivo repetido é detectado por SHA-256: bloqueado no mesmo contrato, avisado entre contratos | Índice parcial `(contract_id, sha256)` em documentos não descartados |
 
 ## Classificação (obrigatória nos docs)
 

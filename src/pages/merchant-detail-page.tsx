@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { MerchantContractsCard } from "@/features/contracts/components/merchant-contracts-card";
 import { listActiveConsultantsForSelect } from "@/features/consultants/api/consultant-service";
 import { consultantQueryKeys } from "@/features/consultants/api/query-keys";
 import {
@@ -221,17 +222,9 @@ export function MerchantDetailPage() {
           </Card>
         ) : null}
 
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-base">Contratos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <EmptyState
-              title="Em breve"
-              description="Os contratos deste lojista serão disponibilizados em uma próxima etapa."
-            />
-          </CardContent>
-        </Card>
+        {role === "admin" || role === "operator" ? (
+          <MerchantContractsCard organizationId={organizationId} merchantId={merchantId ?? ""} />
+        ) : null}
       </div>
     </PageContainer>
   );

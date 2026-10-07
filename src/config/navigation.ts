@@ -48,7 +48,7 @@ export const navigationItems: NavigationItem[] = [
     path: "/contratos",
     icon: FileText,
     matchPrefix: "/contratos",
-    roles: ALL_ROLES,
+    roles: OFFICE_ROLES,
   },
   {
     id: "recharges",
@@ -138,7 +138,19 @@ export const pageMetaByPath: Record<string, PageMeta> = {
   },
   "/contratos": {
     title: "Contratos",
-    description: "Vínculos entre lojistas e operadoras",
+    description: "Pastas por estado, consultor, bandeira e mês",
+  },
+  "/contratos/fila": {
+    title: "Fila de conferência",
+    description: "Contratos recebidos aguardando conferência",
+  },
+  "/contratos/receber": {
+    title: "Receber contrato",
+    description: "Registrar contrato assinado recebido pelo WhatsApp",
+  },
+  "/contratos/canais": {
+    title: "Canais de recebimento",
+    description: "WhatsApps e outros canais por onde chegam os contratos",
   },
   "/recargas": {
     title: "Recargas",
@@ -215,8 +227,8 @@ export function resolvePageMeta(pathname: string): PageMeta {
 
   if (pathname.startsWith("/contratos/")) {
     return {
-      title: "Detalhe do contrato",
-      description: "Resumo estrutural do vínculo operacional",
+      title: "Contrato",
+      description: "Documentos, conferência, pendências e histórico",
     };
   }
 

@@ -1,0 +1,32 @@
+-- Rollback de referência (NÃO executar sem autorização explícita).
+-- Apaga contratos, remessas, documentos (metadados), pendências e histórico.
+-- Arquivos no bucket contract-documents precisam ser removidos pela API de Storage antes.
+
+-- begin;
+-- drop policy if exists contract_documents_storage_select_office on storage.objects;
+-- drop policy if exists contract_documents_storage_insert_office on storage.objects;
+-- drop policy if exists contract_documents_storage_delete_orphan_office on storage.objects;
+-- delete from storage.buckets where id = 'contract-documents';
+-- drop view if exists public.contract_folder_summary;
+-- drop view if exists public.contracts_overview;
+-- drop table if exists public.contract_pendencies;
+-- drop table if exists public.contract_documents;
+-- drop table if exists public.contract_submissions;
+-- drop table if exists public.contract_status_history;
+-- drop table if exists public.contracts;
+-- drop table if exists public.intake_channels;
+-- drop function if exists public.apply_contract_pendency_effects();
+-- drop function if exists public.enforce_contract_pendency_rules();
+-- drop function if exists public.enforce_contract_document_rules();
+-- drop function if exists public.apply_contract_submission_effects();
+-- drop function if exists public.enforce_contract_submission_rules();
+-- drop function if exists public.log_contract_status();
+-- drop function if exists public.enforce_contract_rules();
+-- drop function if exists public.contract_transition_allowed(public.contract_status, public.contract_status);
+-- drop function if exists public.normalize_contract_row();
+-- drop function if exists public.normalize_intake_channel_row();
+-- drop index if exists public.regions_org_state_active_uidx;
+-- drop index if exists public.merchants_id_org_uidx;
+-- drop type if exists public.pendency_status;
+-- drop type if exists public.contract_status;
+-- commit;

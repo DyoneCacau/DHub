@@ -140,3 +140,13 @@ Ver `docs/OPERATIONS_AND_ACTIONS.md` e migration `20261007130000_operations_acti
 - INSERT exige org ativa (`current_active_organization_id()`); campos de criação forçados por trigger; colunas imutáveis protegidas.
 - Sem DELETE em ações, despesas e tipos (cancelamento/inativação por status); DELETE só em participantes e comprovantes.
 - Bucket privado `action-receipts`: policies em `storage.objects` exigem bucket, pasta raiz = org ativa e admin; download por URL assinada (60 s).
+
+## Sprint 6 — Contratos e documentos
+
+Ver `docs/CONTRACTS_AND_DOCUMENTS.md` e migration `20261007160000_contracts_documents.sql`.
+
+- `contracts`, `contract_submissions`, `contract_documents`, `contract_pendencies` e views: **admin e operator** da organização; consultant sem acesso na fase 1 (D55).
+- `contract_status_history`: só SELECT (escrito por trigger). `intake_channels`: SELECT escritório, INSERT/UPDATE só admin.
+- INSERT exige org ativa; campos de criação forçados por trigger; transições de status, pendências e descarte de documento validados no banco.
+- Sem DELETE em nenhuma tabela da sprint.
+- Bucket privado `contract-documents`: pasta raiz = org ativa e papel admin/operator; DELETE só de objeto órfão (sem registro em `contract_documents`).

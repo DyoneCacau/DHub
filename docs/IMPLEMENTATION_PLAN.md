@@ -13,8 +13,8 @@ Ordem proposta a partir daqui (seções abaixo mantêm a numeração original co
 | 3 | Consultores e lojistas | Concluída (migration aplicada, commit `54ce166`) | Sprint 4 |
 | 4 | Bandeiras e regiões | Concluída (migration aplicada, commit `8a9c4bf`); ver `OPERATORS_AND_REGIONS.md` | Sprint 3 (parcial) + novo |
 | 5 | Operações e Ações | Antecipada (D43). Concluída (migration `20261007130000` aplicada); ver `OPERATIONS_AND_ACTIONS.md` | novo |
-| 6 | Contratos e documentos | Planos, campos, tipos de documento, motivos de pendência (D42); contratos, anexos em storage privado, navegação por pastas (região → consultor → bandeira → mês) | Sprint 3 (restante) + Sprint 5 + novo |
-| 7+ | Conferência, recargas, dashboard, integrações, produção | Sem mudança de escopo | Sprints 6–12 |
+| 6 | Contratos e documentos | Concluída (migration `20261007160000`): recebimento pelo escritório por canal/bandeira, remessas, documentos em storage privado, fila de conferência, pendências, histórico e pastas (região → consultor → bandeira → mês); ver `CONTRACTS_AND_DOCUMENTS.md`. Absorveu a conferência/pendências básica da Sprint 6 original. Planos, campos e tipos de documento configuráveis aguardam Q02–Q04 | Sprint 3 (restante) + Sprint 5 + Sprint 6 (parcial) + novo |
+| 7+ | Recargas, dashboard, integrações, produção | Sem mudança de escopo; notificações ao consultor dependem do login do consultor (fase 2) | Sprints 7–12 |
 
 ### Sprint (nova) — Operações e Ações
 

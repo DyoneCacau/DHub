@@ -18,7 +18,7 @@ Dúvidas **não confirmadas**. Não responder por suposição. Atualizar quando 
 | Q12 | Quais as **regras de mudança de consultor** do lojista (quem autoriza, efeito em contratos abertos / snapshot)? | History + RLS | Aberta |
 | Q13 | Há necessidade de **importação histórica** (planilhas/Dropbox) no go-live? | Escopo sprints 9+ | Aberta |
 | Q14 | A remoção de `submitted` (envio → `awaiting_review`) atende a operação, ou existe etapa distinta de “enviado” vs “em fila”? | Workflow de contrato | Aberta (proposta consolidada remove `submitted`; validar com operação) |
-| Q15 | O estado `corrected` é necessário ou basta voltar para `awaiting_review`? | Workflow de contrato | Aberta |
+| Q15 | O estado `corrected` é necessário ou basta voltar para `awaiting_review`? | Workflow de contrato | Aberta (Sprint 6 manteve `corrected` e permite conferir direto — D58; validar com operação) |
 | Q16 | Recarga só é permitida com contrato em `active`, ou também em outros status? | Pré-condição de criação | Aberta |
 | Q17 | Qual o **critério de unicidade** do lojista (CNPJ, CPF, outro)? | Constraints; deduplicação. Sprint 3: sem unique rígido; índice + aviso UI | Aberta (parcialmente mitigada) |
 | Q18 | Quais **relatórios operacionais** o operador deve ver? (Auditoria técnica: **não** — consolidado na Sprint 0.1) | Menus e RLS de relatórios | Aberta (escopo de relatórios); auditoria técnica fechada como negada ao operador |

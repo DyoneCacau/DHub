@@ -60,6 +60,18 @@ const ContractDetailPage = lazyNamed(
   () => import("@/pages/contract-detail-page"),
   "ContractDetailPage",
 );
+const ContractsQueuePage = lazyNamed(
+  () => import("@/pages/contracts-queue-page"),
+  "ContractsQueuePage",
+);
+const ContractReceivePage = lazyNamed(
+  () => import("@/pages/contract-receive-page"),
+  "ContractReceivePage",
+);
+const IntakeChannelsPage = lazyNamed(
+  () => import("@/pages/intake-channels-page"),
+  "IntakeChannelsPage",
+);
 const RechargesPage = lazyNamed(() => import("@/pages/recharges-page"), "RechargesPage");
 const OperatorsPage = lazyNamed(() => import("@/pages/operators-page"), "OperatorsPage");
 const RegionsPage = lazyNamed(() => import("@/pages/regions-page"), "RegionsPage");
@@ -139,11 +151,6 @@ export function AppRoutes() {
               path="/lojistas/:merchantId"
               element={withPageSuspense(MerchantDetailPage)}
             />
-            <Route path="/contratos" element={withPageSuspense(ContractsPage)} />
-            <Route
-              path="/contratos/:contractId"
-              element={withPageSuspense(ContractDetailPage)}
-            />
             <Route path="/recargas" element={withPageSuspense(RechargesPage)} />
             <Route path="/conta" element={withPageSuspense(AccountPage)} />
             <Route path="/acesso-negado" element={withPageSuspense(AccessDeniedPage)} />
@@ -160,11 +167,16 @@ export function AppRoutes() {
                 element={withPageSuspense(ConsultantDetailPage)}
               />
               <Route path="/relatorios" element={withPageSuspense(ReportsPage)} />
+              <Route path="/contratos" element={withPageSuspense(ContractsPage)} />
+              <Route path="/contratos/fila" element={withPageSuspense(ContractsQueuePage)} />
+              <Route path="/contratos/receber" element={withPageSuspense(ContractReceivePage)} />
+              <Route path="/contratos/:contractId" element={withPageSuspense(ContractDetailPage)} />
             </Route>
 
             <Route element={<RequireRole roles={["admin"]} />}>
               <Route path="/operadoras" element={withPageSuspense(OperatorsPage)} />
               <Route path="/regioes" element={withPageSuspense(RegionsPage)} />
+              <Route path="/contratos/canais" element={withPageSuspense(IntakeChannelsPage)} />
               <Route path="/despesas" element={withPageSuspense(ExpensesPage)} />
               <Route path="/acoes" element={withPageSuspense(ActionsPage)} />
               <Route path="/acoes/nova" element={withPageSuspense(ActionFormPage)} />
