@@ -59,6 +59,11 @@ export interface ActionExpense {
   payment_method: string | null;
   status: ExpenseStatus;
   notes: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  origin: string | null;
+  destination: string | null;
+  booking_code: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -89,6 +94,24 @@ export interface ActionExpenseReportRow {
   reference_month: string;
   planned_amount: number | null;
   actual_amount: number | null;
+  consultant_id: string | null;
+  supplier: string | null;
+  description: string | null;
+  payment_method: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  origin: string | null;
+  destination: string | null;
+  booking_code: string | null;
+  action_status: ActionStatus;
+}
+
+export interface ExpenseReportFilters {
+  month: string;
+  expenseTypeId: string | "all";
+  consultantId: string | "all";
+  operatorId: string | "all";
+  status: ExpenseStatus | "active";
 }
 
 export interface ActionFilters {

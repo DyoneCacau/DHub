@@ -33,18 +33,28 @@ export const actionFormSchema = z
 
 export type ActionFormValues = z.infer<typeof actionFormSchema>;
 
-export const expenseFormSchema = z.object({
-  expense_type_id: z.string().uuid("Selecione o tipo de despesa"),
-  consultant_id: z.string(),
-  supplier: z.string().trim().max(160),
-  description: z.string().trim().max(500),
-  expense_date: optionalDate,
-  planned_amount: moneyField,
-  actual_amount: moneyField,
-  payment_method: z.string().trim().max(80),
-  status: z.enum(["planned", "paid", "cancelled"]),
-  notes: z.string().trim().max(2000),
-});
+export const expenseFormSchema = z
+  .object({
+    expense_type_id: z.string().uuid("Selecione o tipo de despesa"),
+    consultant_id: z.string(),
+    supplier: z.string().trim().max(160),
+    description: z.string().trim().max(500),
+    expense_date: optionalDate,
+    planned_amount: moneyField,
+    actual_amount: moneyField,
+    payment_method: z.string().trim().max(80),
+    status: z.enum(["planned", "paid", "cancelled"]),
+    notes: z.string().trim().max(2000),
+    period_start: optionalDate,
+    period_end: optionalDate,
+    origin: z.string().trim().max(120),
+    destination: z.string().trim().max(120),
+    booking_code: z.string().trim().max(60),
+  })
+  .refine(
+    (values) => !values.period_start || !values.period_end || values.period_end >= values.period_start,
+    { message: "O fim deve ser igual ou posterior ao início", path: ["period_end"] },
+  );
 
 export type ExpenseFormValues = z.infer<typeof expenseFormSchema>;
 

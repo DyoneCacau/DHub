@@ -55,6 +55,9 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D49 | 2026-10-07 | Região do contrato vem do **endereço do lojista** (automático), não escolhida no contrato | Responde Q26 |
 | D50 | 2026-10-07 | Região = **estado (UF)**. Região do contrato = região cuja UF é a do endereço do lojista | Responde Q25; na sprint de contratos: no máximo uma região ativa por UF na org e UF do lojista obrigatória para arquivar |
 | D51 | 2026-10-07 | Estados atendidos: BA, CE, DF, MA, PA, PE, PR, RJ, RN, RS, SC, SP (seed); outros entram pela tela quando aparecerem. PI já existia e foi mantido | Migration `20261007140000_seed_regions.sql` |
+| D52 | 2026-10-07 | Novos tipos de despesa: Hospedagem / Hotel, Alimentação, Táxi / Uber / transporte local | Migration `20261007150000` |
+| D53 | 2026-10-07 | Despesa guarda dados de viagem: período (início/fim), origem, destino e código da reserva | Campos opcionais em `action_expenses` |
+| D54 | 2026-10-07 | Toda despesa pertence a uma ação (sem despesa avulsa); tela geral `/despesas` consolida todas, só admin | `OPERATIONS_AND_ACTIONS.md` |
 
 ## Classificação (obrigatória nos docs)
 

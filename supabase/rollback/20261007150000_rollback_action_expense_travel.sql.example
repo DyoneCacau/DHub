@@ -1,0 +1,15 @@
+-- Rollback de referência (NÃO executar sem autorização explícita).
+-- Apaga os dados de viagem já preenchidos nas despesas.
+-- Tipos de despesa novos: preferir inativar pela tela /acoes/tipos-despesa.
+
+-- drop view if exists public.action_expense_report;
+-- (recriar a view com a definição da migration 20261007130000)
+-- alter table public.action_expenses
+--   drop constraint if exists action_expenses_travel_lengths,
+--   drop constraint if exists action_expenses_period_valid,
+--   drop column if exists booking_code,
+--   drop column if exists destination,
+--   drop column if exists origin,
+--   drop column if exists period_end,
+--   drop column if exists period_start;
+-- (recriar normalize_action_expense_row() com a definição da migration 20261007130000)

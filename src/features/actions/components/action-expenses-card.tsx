@@ -39,6 +39,7 @@ import {
   expenseStatusVariant,
   formatDate,
   formatMoney,
+  formatPeriod,
   moneyToInput,
   parseMoney,
 } from "@/features/actions/utils/format";
@@ -64,6 +65,11 @@ const EMPTY_VALUES: ExpenseFormValues = {
   payment_method: "",
   status: "planned",
   notes: "",
+  period_start: "",
+  period_end: "",
+  origin: "",
+  destination: "",
+  booking_code: "",
 };
 
 function FieldError({ message }: { message?: string }) {
@@ -120,6 +126,11 @@ export function ActionExpensesCard({ organizationId, actionId, consultants }: Ac
         payment_method: values.payment_method || null,
         status: values.status,
         notes: values.notes || null,
+        period_start: values.period_start || null,
+        period_end: values.period_end || null,
+        origin: values.origin || null,
+        destination: values.destination || null,
+        booking_code: values.booking_code || null,
       };
       return editing
         ? updateExpense(editing.id, input)
@@ -168,6 +179,11 @@ export function ActionExpensesCard({ organizationId, actionId, consultants }: Ac
       payment_method: expense.payment_method ?? "",
       status: expense.status,
       notes: expense.notes ?? "",
+      period_start: expense.period_start ?? "",
+      period_end: expense.period_end ?? "",
+      origin: expense.origin ?? "",
+      destination: expense.destination ?? "",
+      booking_code: expense.booking_code ?? "",
     });
     setFormOpen(true);
   };
@@ -280,13 +296,40 @@ export function ActionExpensesCard({ organizationId, actionId, consultants }: Ac
               <Label htmlFor="expense-description">Descrição</Label>
               <Input
                 id="expense-description"
-                placeholder="Ex.: voo GRU → REC, locadora, posto…"
+                placeholder="Ex.: voo, categoria do carro, quarto…"
                 {...form.register("description")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expense-date">Data</Label>
+              <Label htmlFor="expense-period-start">Início (ida / check-in / retirada)</Label>
+              <Input id="expense-period-start" type="date" {...form.register("period_start")} />
+              <FieldError message={errors.period_start?.message} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expense-period-end">Fim (volta / check-out / devolução)</Label>
+              <Input id="expense-period-end" type="date" {...form.register("period_end")} />
+              <FieldError message={errors.period_end?.message} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expense-booking">Código da reserva / localizador</Label>
+              <Input id="expense-booking" {...form.register("booking_code")} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expense-origin">Origem</Label>
+              <Input id="expense-origin" placeholder="Cidade" {...form.register("origin")} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expense-destination">Destino</Label>
+              <Input id="expense-destination" placeholder="Cidade" {...form.register("destination")} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expense-date">Data da compra / pagamento</Label>
               <Input id="expense-date" type="date" {...form.register("expense_date")} />
               <FieldError message={errors.expense_date?.message} />
             </div>
@@ -393,6 +436,17 @@ export function ActionExpensesCard({ organizationId, actionId, consultants }: Ac
                       <td className="px-3 py-2 text-muted-foreground">
                         {expense.description ? <div>{expense.description}</div> : null}
                         {expense.supplier ? <div>{expense.supplier}</div> : null}
+                        {expense.origin || expense.destination ? (
+                          <div>
+                            {expense.origin ?? "—"} → {expense.destination ?? "—"}
+                          </div>
+                        ) : null}
+                        {expense.period_start || expense.period_end ? (
+                          <div>
+                            {formatPeriod(expense.period_start, expense.period_end)}
+                          </div>
+                        ) : null}
+                        {expense.booking_code ? <div>Reserva: {expense.booking_code}</div> : null}
                         {expense.consultant_id ? (
                           <div>Para: {consultantNames.get(expense.consultant_id) ?? "—"}</div>
                         ) : null}

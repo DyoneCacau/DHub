@@ -109,9 +109,12 @@ export function ActionsPage() {
     <PageContainer>
       <PageHeader
         title="Operações e Ações"
-        description="Ações de bandeira, viagens e despesas (passagens, carros, combustível, cartões, contas)."
+        description="Ações de bandeira, viagens e despesas (passagens, carros, hotéis, combustível, cartões, contas)."
         actions={
           <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link to="/despesas">Despesas</Link>
+            </Button>
             <Button asChild variant="outline">
               <Link to="/acoes/tipos-despesa">Tipos de despesa</Link>
             </Button>

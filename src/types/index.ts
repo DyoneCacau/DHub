@@ -11,6 +11,7 @@ export type NavigationItemId =
   | "operators"
   | "regions"
   | "actions"
+  | "expenses"
   | "reports"
   | "settings"
   | "settings-users"

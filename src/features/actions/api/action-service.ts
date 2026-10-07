@@ -10,6 +10,7 @@ import type {
   ActionStatus,
   ActionWithTotals,
   ExpenseAttachment,
+  ExpenseReportFilters,
   ExpenseStatus,
   ExpenseType,
 } from "@/features/actions/types/action";
@@ -41,6 +42,11 @@ export interface ExpenseInput {
   payment_method: string | null;
   status: ExpenseStatus;
   notes: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  origin: string | null;
+  destination: string | null;
+  booking_code: string | null;
 }
 
 function monthRange(month: string): { start: string; end: string } {
@@ -78,6 +84,11 @@ function normalizeExpenseInput(input: ExpenseInput) {
     payment_method: normalizeText(input.payment_method),
     status: input.status,
     notes: normalizeText(input.notes),
+    period_start: input.period_start || null,
+    period_end: input.period_end || null,
+    origin: normalizeText(input.origin),
+    destination: normalizeText(input.destination),
+    booking_code: normalizeText(input.booking_code),
   };
 }
 
@@ -164,6 +175,34 @@ export async function listActionReport(
 
   const { data, error } = await query;
   if (error) throw new Error(mapDomainError(error, "Não foi possível carregar o resumo de gastos."));
+  return (data ?? []) as ActionExpenseReportRow[];
+}
+
+const EXPENSE_REPORT_LIMIT = 2000;
+
+export async function listExpenseReport(
+  organizationId: string,
+  filters: ExpenseReportFilters,
+): Promise<ActionExpenseReportRow[]> {
+  let query = supabase
+    .from("action_expense_report")
+    .select("*")
+    .eq("organization_id", organizationId)
+    .order("reference_month", { ascending: false })
+    .order("expense_date", { ascending: false, nullsFirst: false })
+    .limit(EXPENSE_REPORT_LIMIT);
+
+  if (filters.month) query = query.eq("reference_month", `${filters.month}-01`);
+  if (filters.expenseTypeId !== "all") query = query.eq("expense_type_id", filters.expenseTypeId);
+  if (filters.consultantId !== "all") query = query.eq("consultant_id", filters.consultantId);
+  if (filters.operatorId !== "all") query = query.eq("operator_id", filters.operatorId);
+  query =
+    filters.status === "active"
+      ? query.neq("status", "cancelled")
+      : query.eq("status", filters.status);
+
+  const { data, error } = await query;
+  if (error) throw new Error(mapDomainError(error, "Não foi possível carregar as despesas."));
   return (data ?? []) as ActionExpenseReportRow[];
 }
 

@@ -2,7 +2,7 @@
 
 Módulo para a gerência controlar ações de bandeira (viagens de consultores) e as despesas associadas: passagens aéreas, aluguel de carro, combustível, recarga de cartão combustível/frota, recarga de cartão corporativo, contas etc.
 
-Decisões: D37, D38, D39, D43–D47. Questões abertas relacionadas: Q22, Q23, Q24, Q27, Q28.
+Decisões: D37, D38, D39, D43–D47, D52–D54. Questões abertas relacionadas: Q22, Q23, Q24, Q27, Q28.
 
 Migration: `supabase/migrations/20261007130000_operations_actions.sql` (rollback de referência em `supabase/rollback/20261007130000_rollback_operations_actions.sql.example`).
 
@@ -10,10 +10,10 @@ Migration: `supabase/migrations/20261007130000_operations_actions.sql` (rollback
 
 | Tabela | Conteúdo | Exclusão |
 |--------|----------|----------|
-| `expense_types` | Categorias de despesa configuráveis (nome, status ativo/inativo, observações). Seeds: Passagem aérea, Aluguel de carro, Combustível, Recarga de cartão combustível/frota, Recarga de cartão corporativo, Contas, Outros | Sem DELETE; inativar |
+| `expense_types` | Categorias de despesa configuráveis (nome, status ativo/inativo, observações). Seeds: Passagem aérea, Aluguel de carro, Combustível, Recarga de cartão combustível/frota, Recarga de cartão corporativo, Contas, Outros; depois Hospedagem / Hotel, Alimentação, Táxi / Uber / transporte local | Sem DELETE; inativar |
 | `actions` | Ação: título, bandeira (opcional), região (opcional), cidade, início, fim, status, orçamento, observações | Sem DELETE; status `cancelled` |
 | `action_participants` | Consultores que participam da ação (PK `action_id + consultant_id`) | DELETE permitido (admin) |
-| `action_expenses` | Despesa: tipo, consultor (opcional), fornecedor, descrição, data, valor previsto, valor realizado, forma de pagamento (texto livre), status, observações | Sem DELETE; status `cancelled` |
+| `action_expenses` | Despesa: tipo, consultor (opcional), fornecedor, descrição, data da compra/pagamento, valor previsto, valor realizado, forma de pagamento (texto livre), status, observações. Viagem (migration `20261007150000`): `period_start`/`period_end` (ida/volta, check-in/check-out, retirada/devolução), `origin`, `destination`, `booking_code` (localizador, maiúsculas) | Sem DELETE; status `cancelled` |
 | `expense_attachments` | Comprovantes (PDF/JPEG/PNG/WEBP, até 10 MB) vinculados à despesa; arquivo no bucket privado `action-receipts` | DELETE permitido (admin) |
 
 Status de ação: `planned` (planejada) → `in_progress` (em andamento) → `completed` (concluída); `cancelled` (cancelada) a qualquer momento. Status de despesa: `planned` (prevista), `paid` (paga), `cancelled` (cancelada).
@@ -23,7 +23,7 @@ Todas as FKs entre essas tabelas (e para `operators`, `regions`, `consultants`) 
 ## Views
 
 - `actions_with_totals`: ação + `participant_count`, `planned_total` (soma do previsto das despesas não canceladas) e `paid_total` (soma do realizado das despesas pagas).
-- `action_expense_report`: despesas não canceladas com dados da ação e `reference_month` = mês da data da despesa (ou do início da ação, se a despesa não tiver data). Usada na lista para "Gastos por bandeira" no mês.
+- `action_expense_report`: uma linha por despesa com dados da ação (título, bandeira, região, status) e da despesa (consultor, fornecedor, viagem, valores). `reference_month` = mês da data da despesa; sem ela, do início do período; sem ele, do início da ação. Usada em "Gastos por bandeira" (`/acoes`) e na tela geral `/despesas`.
 
 Ambas com `security_invoker = true` (respeitam a RLS das tabelas).
 
@@ -61,6 +61,7 @@ Eventos de domínio em `audit_logs` (metadata só com ids, status e nomes de cam
 - `/acoes/nova`, `/acoes/:actionId/editar`: formulário da ação.
 - `/acoes/:actionId`: dados, totais (aviso "Acima do orçamento"), mudança de status, participantes, despesas e comprovantes.
 - `/acoes/tipos-despesa`: CRUD de tipos de despesa (inativar em vez de excluir).
+- `/despesas`: todas as despesas de todas as ações, com filtros (mês, tipo, consultor, bandeira, status), totais previsto/pago e "Gastos por tipo" (clique filtra). Toda despesa pertence a uma ação (D54). Limite de 2.000 linhas por consulta.
 - Item de menu "Operações e Ações" visível só para admin; rotas sob `RequireRole` admin.
 
 ## Testes de RLS (executar após aplicar a migration)

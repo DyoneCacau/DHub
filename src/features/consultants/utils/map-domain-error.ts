@@ -17,6 +17,8 @@ const FRIENDLY: Array<{ match: RegExp; message: string }> = [
   { match: /action_participants_pkey/i, message: "Este consultor já participa da ação." },
   { match: /Tipo de despesa inativo/i, message: "Selecione um tipo de despesa ativo." },
   { match: /actions_period_valid/i, message: "A data final deve ser igual ou posterior ao início." },
+  { match: /action_expenses_period_valid/i, message: "O fim do período deve ser igual ou posterior ao início." },
+  { match: /action_expenses_travel_lengths/i, message: "Origem, destino ou código da reserva muito longos." },
   { match: /expense_attachments_mime_allowed|mime type .* is not supported/i, message: "Formato não permitido. Envie PDF, JPG, PNG ou WEBP." },
   { match: /expense_attachments_size_valid|exceeded the maximum allowed size|Payload too large/i, message: "Arquivo acima de 10 MB." },
   { match: /network|fetch/i, message: "Falha de rede. Tente novamente." },

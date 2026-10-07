@@ -28,6 +28,13 @@ export function formatDate(value: string | null | undefined): string {
   return `${day}/${month}/${year}`;
 }
 
+export function formatPeriod(start: string | null, end: string | null): string {
+  if (start && end) return `${formatDate(start)} a ${formatDate(end)}`;
+  if (start) return `a partir de ${formatDate(start)}`;
+  if (end) return `até ${formatDate(end)}`;
+  return "—";
+}
+
 export function formatMonth(value: string): string {
   const [year, month] = value.slice(0, 7).split("-");
   return `${month}/${year}`;

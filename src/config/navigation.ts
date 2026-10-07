@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   MapPin,
   Plane,
+  Receipt,
   RefreshCw,
   Settings,
   Store,
@@ -62,6 +63,14 @@ export const navigationItems: NavigationItem[] = [
     path: "/acoes",
     icon: Plane,
     matchPrefix: "/acoes",
+    roles: ["admin"],
+  },
+  {
+    id: "expenses",
+    label: "Despesas",
+    path: "/despesas",
+    icon: Receipt,
+    matchPrefix: "/despesas",
     roles: ["admin"],
   },
   {
@@ -142,6 +151,10 @@ export const pageMetaByPath: Record<string, PageMeta> = {
   "/acoes": {
     title: "Operações e Ações",
     description: "Ações de bandeira, viagens e despesas",
+  },
+  "/despesas": {
+    title: "Despesas",
+    description: "Passagens, carros, hotéis e demais gastos das ações",
   },
   "/acoes/tipos-despesa": {
     title: "Tipos de despesa",

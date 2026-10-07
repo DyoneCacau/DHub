@@ -66,6 +66,7 @@ const RegionsPage = lazyNamed(() => import("@/pages/regions-page"), "RegionsPage
 const ActionsPage = lazyNamed(() => import("@/pages/actions-page"), "ActionsPage");
 const ActionFormPage = lazyNamed(() => import("@/pages/action-form-page"), "ActionFormPage");
 const ActionDetailPage = lazyNamed(() => import("@/pages/action-detail-page"), "ActionDetailPage");
+const ExpensesPage = lazyNamed(() => import("@/pages/expenses-page"), "ExpensesPage");
 const ExpenseTypesPage = lazyNamed(
   () => import("@/pages/expense-types-page"),
   "ExpenseTypesPage",
@@ -164,6 +165,7 @@ export function AppRoutes() {
             <Route element={<RequireRole roles={["admin"]} />}>
               <Route path="/operadoras" element={withPageSuspense(OperatorsPage)} />
               <Route path="/regioes" element={withPageSuspense(RegionsPage)} />
+              <Route path="/despesas" element={withPageSuspense(ExpensesPage)} />
               <Route path="/acoes" element={withPageSuspense(ActionsPage)} />
               <Route path="/acoes/nova" element={withPageSuspense(ActionFormPage)} />
               <Route path="/acoes/tipos-despesa" element={withPageSuspense(ExpenseTypesPage)} />
