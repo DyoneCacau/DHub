@@ -2,6 +2,32 @@
 
 Uma sprint por vez. Não implementar fora da sprint atual.
 
+## Replanejamento (2026-10-07)
+
+A Sprint 3 executada foi **Consultores e lojistas** (originalmente Sprint 4). Novos requisitos: regiões, consultor com várias bandeiras/regiões, pastas de contratos por região → consultor → bandeira → mês e módulo **Operações e Ações** (D34–D39; `REGIONS_DOCUMENTS_AND_ACTIONS.md`).
+
+Ordem proposta a partir daqui (seções abaixo mantêm a numeração original como referência de escopo):
+
+| Ordem | Sprint | Escopo | Seção original |
+|-------|--------|--------|----------------|
+| 3 | Consultores e lojistas | Em fechamento (revisão de riscos + db push autorizado) | Sprint 4 |
+| 4 | Bandeiras e regiões | Configuração de operadoras + `regions`, `consultant_regions`, `consultant_operators` | Sprint 3 + novo |
+| 5 | Contratos e documentos | Contratos, anexos em storage privado, navegação por pastas (região → consultor → bandeira → mês) | Sprint 5 + novo |
+| 6 | Operações e Ações | Ações, participantes, despesas, comprovantes; só admin. Pode ser antecipada (não depende de contratos) | novo |
+| 7+ | Conferência, recargas, dashboard, integrações, produção | Sem mudança de escopo | Sprints 6–12 |
+
+### Sprint (nova) — Operações e Ações
+
+| Item | Conteúdo |
+|------|----------|
+| Objetivo | Controlar ações de bandeira e as despesas de viagem/operação |
+| Escopo | `actions`, `action_participants`, `expense_types`, `action_expenses`, `expense_attachments`; aba só admin; totais previsto × realizado |
+| Entregáveis | CRUD com cancelamento (sem DELETE); upload privado de comprovantes; RLS admin; auditoria |
+| Dependências | Consultores; bandeiras e regiões |
+| Riscos | Regras de aprovação/reembolso e cartões não confirmadas (Q22–Q24, Q28) |
+| Critérios de aceite | Operator/consultant sem acesso no banco; comprovantes privados; lint/typecheck/build OK |
+| Fora de escopo | Integração bancária/cartões; reembolso automático; relatórios financeiros avançados |
+
 ---
 
 ## Sprint 0 — Documentação e arquitetura

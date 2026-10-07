@@ -33,6 +33,16 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D27 | 2026-08-06 | Sem cadastro público; bootstrap do primeiro admin via Auth Dashboard + SQL revisado | `docs/SUPABASE_SETUP.md` |
 | D28 | 2026-08-06 | Papel e org vêm de `organization_members` no banco (não de metadata/localStorage) | AuthProvider + RLS |
 | D29 | 2026-08-06 | Lista de membros na UI é somente leitura nesta sprint; alteração de papel via RPC fica para depois | `/configuracoes/usuarios` |
+| D30 | 2026-08-06 | `consultants` ≠ `organization_members`; vínculo Auth opcional via `user_id` | Sprint 3 |
+| D31 | 2026-08-06 | Mesma organização consultor↔lojista garantida por FK composta `(consultant_id, organization_id)` | Migration `20260806130000` |
+| D32 | 2026-08-06 | Sem unique rígido de documento de lojista nesta sprint; aviso de possível duplicidade na UI | Q17 |
+| D33 | 2026-08-06 | Consultant: lojistas só próprios; sem troca de `consultant_id`; sem UPDATE em consultores nesta sprint | RLS Sprint 3 |
+| D34 | 2026-10-07 | Consultor pode atender **várias regiões/cidades** | N:N `consultant_regions`; ver `REGIONS_DOCUMENTS_AND_ACTIONS.md` |
+| D35 | 2026-10-07 | Consultor pode atender **várias bandeiras** (operadoras) | N:N `consultant_operators` |
+| D36 | 2026-10-07 | Contratos assinados (PDF/imagem) navegáveis por **região → consultor → bandeira → mês** | Pastas derivadas dos dados (proposta); critério do mês em Q21; região do contrato em Q26 |
+| D37 | 2026-10-07 | Módulo **Operações e Ações** no escopo: ações de bandeira com viagens e despesas (passagens, aluguel de carro, combustível, recarga de cartões, contas) | Responde Q09 |
+| D38 | 2026-10-07 | Somente **admin (gerente)** cria/gerencia ações e despesas | RLS `is_org_admin`; operator e consultant sem acesso (Q22) |
+| D39 | 2026-10-07 | Existem **cartão combustível/frota** e **cartão corporativo pré-pago** | Tipos de despesa distintos; cadastro de cartões em Q23 |
 
 ## Classificação (obrigatória nos docs)
 

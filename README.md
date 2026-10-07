@@ -55,8 +55,8 @@ src/
   app/              # bootstrap, providers
   components/       # layout, shared, ui
   config/           # env, navegação
-  features/auth/    # auth service, guards, hooks
-  lib/              # supabase client, utils
+  features/         # auth, consultants, merchants
+  lib/              # supabase client, normalize, utils
   pages/
   routes/
   types/
@@ -66,34 +66,37 @@ supabase/
 docs/
 ```
 
-## Rotas (Sprint 2)
+## Rotas
 
 | Rota | Acesso |
 |------|--------|
 | `/login`, `/esqueci-senha` | Público |
 | `/redefinir-senha` | Sessão de recovery |
-| `/dashboard`, módulos estruturais | Membership ativa |
+| `/dashboard` | Membership ativa |
+| `/consultores`, `/consultores/:id`, formulários | Admin / Operator |
+| `/lojistas`, `/lojistas/:id`, formulários | Membership ativa (RLS por papel) |
 | `/configuracoes`, `/configuracoes/usuarios`, `/operadoras` | Admin |
-| `/consultores`, `/relatorios` | Admin / Operator |
+| `/relatorios` | Admin / Operator |
 | `/conta` | Membership ativa |
 | `/acesso-negado` | Autenticado com papel insuficiente |
 
 ## Estado atual
 
 - Sprint 1: fundação visual
-- Sprint 2: Auth + org + membership + RLS (migrations locais; **sem push remoto automático**)
-- Sem CRUD de lojistas/contratos/recargas
+- Sprint 2: Auth + org + membership + RLS
+- Sprint 3: Consultores + lojistas (CRUD, RLS, auditoria) — migration **local** até autorização
+- Sem contratos/recargas/operadoras configuráveis
 - Sem `service_role` no frontend
 
 ## Limitações
 
-- Migrations podem ainda não estar aplicadas no projeto remoto
-- Bootstrap do admin é manual
-- Lista de usuários é somente leitura (sem alteração de papel no app)
-- Módulos de negócio continuam estruturais
+- Migration Sprint 3 ainda não aplicada no remoto até autorização
+- Sem unique rígido de documento de lojista (Q17)
+- Múltiplas memberships ativas bloqueiam helpers de org até seletor existir
+- Lista de usuários é somente leitura
 
 ## Próximas sprints
 
-3. Configuração de operadoras · 4. Consultores/lojistas · 5+ contratos/recargas · 9–11 integrações
+4. Operadoras/planos (ou conforme plano revisado) · contratos · recargas · integrações
 
-Documentação arquitetural: pasta [`docs/`](./docs).
+Documentação: [`docs/`](./docs) · consultores/lojistas: [`docs/CONSULTANTS_AND_MERCHANTS.md`](./docs/CONSULTANTS_AND_MERCHANTS.md).

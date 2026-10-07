@@ -38,10 +38,22 @@ const ConsultantsPage = lazyNamed(
   () => import("@/pages/consultants-page"),
   "ConsultantsPage",
 );
+const ConsultantDetailPage = lazyNamed(
+  () => import("@/pages/consultant-detail-page"),
+  "ConsultantDetailPage",
+);
+const ConsultantFormPage = lazyNamed(
+  () => import("@/pages/consultant-form-page"),
+  "ConsultantFormPage",
+);
 const MerchantsPage = lazyNamed(() => import("@/pages/merchants-page"), "MerchantsPage");
 const MerchantDetailPage = lazyNamed(
   () => import("@/pages/merchant-detail-page"),
   "MerchantDetailPage",
+);
+const MerchantFormPage = lazyNamed(
+  () => import("@/pages/merchant-form-page"),
+  "MerchantFormPage",
 );
 const ContractsPage = lazyNamed(() => import("@/pages/contracts-page"), "ContractsPage");
 const ContractDetailPage = lazyNamed(
@@ -109,6 +121,11 @@ export function AppRoutes() {
           <Route element={<AdminLayout />}>
             <Route path="/dashboard" element={withPageSuspense(DashboardPage)} />
             <Route path="/lojistas" element={withPageSuspense(MerchantsPage)} />
+            <Route path="/lojistas/novo" element={withPageSuspense(MerchantFormPage)} />
+            <Route
+              path="/lojistas/:merchantId/editar"
+              element={withPageSuspense(MerchantFormPage)}
+            />
             <Route
               path="/lojistas/:merchantId"
               element={withPageSuspense(MerchantDetailPage)}
@@ -124,6 +141,15 @@ export function AppRoutes() {
 
             <Route element={<RequireRole roles={["admin", "operator"]} />}>
               <Route path="/consultores" element={withPageSuspense(ConsultantsPage)} />
+              <Route path="/consultores/novo" element={withPageSuspense(ConsultantFormPage)} />
+              <Route
+                path="/consultores/:consultantId/editar"
+                element={withPageSuspense(ConsultantFormPage)}
+              />
+              <Route
+                path="/consultores/:consultantId"
+                element={withPageSuspense(ConsultantDetailPage)}
+              />
               <Route path="/relatorios" element={withPageSuspense(ReportsPage)} />
             </Route>
 

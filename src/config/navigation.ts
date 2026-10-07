@@ -28,6 +28,7 @@ export const navigationItems: NavigationItem[] = [
     label: "Consultores",
     path: "/consultores",
     icon: Users,
+    matchPrefix: "/consultores",
     roles: OFFICE_ROLES,
   },
   {
@@ -149,10 +150,17 @@ export function resolvePageMeta(pathname: string): PageMeta {
     return exact;
   }
 
+  if (pathname.startsWith("/consultores/")) {
+    return {
+      title: "Consultor",
+      description: "Cadastro operacional do consultor",
+    };
+  }
+
   if (pathname.startsWith("/lojistas/")) {
     return {
       title: "Detalhe do lojista",
-      description: "Visão estrutural do cadastro",
+      description: "Cadastro e vínculo com consultor",
     };
   }
 

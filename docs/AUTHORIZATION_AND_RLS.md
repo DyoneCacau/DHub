@@ -114,7 +114,13 @@ Incluir casos explícitos:
 
 Demais fixtures da Sprint 0 permanecem válidas.
 
-## Questões ainda abertas (não bloqueiam a consolidação acima)
+## Sprint 3 — Consultores e lojistas
 
-- Detalhe fino de quais relatórios o operador vê (não confundir com auditoria) — pode refinar sem reabrir a negação de auditoria técnica.
-- Ownership pós-troca de consultor (Q12).
+Ver `docs/CONSULTANTS_AND_MERCHANTS.md` e migration `20260806130000_consultants_merchants.sql`.
+
+- FK composta garante `merchants.organization_id = consultants.organization_id`.
+- Consultant: SELECT próprio consultor; merchants só do próprio `consultant_id`; INSERT merchant força vínculo a si.
+- Operator: gestão operacional; **não** altera `consultants.user_id`.
+- Admin: gestão completa na org, incluindo vínculo Auth.
+- Sem DELETE pelo client; inativação via `status`.
+- Auditoria técnica (`audit_logs`) continua só SELECT admin; eventos de domínio via triggers.

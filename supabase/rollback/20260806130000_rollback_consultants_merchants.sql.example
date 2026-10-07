@@ -1,0 +1,50 @@
+-- ROLLBACK Sprint 3 — Consultores e lojistas
+-- EXEMPLO. NÃO EXECUTAR sem autorização explícita.
+-- Remove objetos da migration 20260806130000_consultants_merchants.sql
+-- NÃO remove organizations/profiles/members nem dados de Auth.
+
+-- begin;
+
+-- drop policy if exists consultants_select_admin_operator on public.consultants;
+-- drop policy if exists consultants_select_self on public.consultants;
+-- drop policy if exists consultants_insert_admin_operator on public.consultants;
+-- drop policy if exists consultants_update_admin on public.consultants;
+-- drop policy if exists consultants_update_operator on public.consultants;
+-- drop policy if exists merchants_select_admin_operator on public.merchants;
+-- drop policy if exists merchants_select_consultant_own on public.merchants;
+-- drop policy if exists merchants_insert_admin_operator on public.merchants;
+-- drop policy if exists merchants_insert_consultant_own on public.merchants;
+-- drop policy if exists merchants_update_admin_operator on public.merchants;
+-- drop policy if exists merchants_update_consultant_own on public.merchants;
+
+-- drop view if exists public.consultants_with_counts;
+
+-- drop trigger if exists consultants_audit on public.consultants;
+-- drop trigger if exists consultants_set_updated_at on public.consultants;
+-- drop trigger if exists consultants_immutable on public.consultants;
+-- drop trigger if exists consultants_write_rules on public.consultants;
+-- drop trigger if exists consultants_normalize on public.consultants;
+-- drop trigger if exists merchants_audit on public.merchants;
+-- drop trigger if exists merchants_set_updated_at on public.merchants;
+-- drop trigger if exists merchants_immutable on public.merchants;
+-- drop trigger if exists merchants_consultant_rules on public.merchants;
+-- drop trigger if exists merchants_normalize on public.merchants;
+
+-- drop function if exists public.audit_merchant_changes();
+-- drop function if exists public.audit_consultant_changes();
+-- drop function if exists public.enforce_consultant_write_rules();
+-- drop function if exists public.enforce_merchant_consultant_rules();
+-- drop function if exists public.enforce_merchant_immutable_columns();
+-- drop function if exists public.enforce_consultant_immutable_columns();
+-- drop function if exists public.normalize_merchant_row();
+-- drop function if exists public.normalize_consultant_row();
+-- drop function if exists public.current_consultant_id();
+-- drop function if exists public.current_active_organization_id();
+
+-- drop table if exists public.merchants;
+-- drop table if exists public.consultants;
+
+-- drop type if exists public.merchant_status;
+-- drop type if exists public.consultant_status;
+
+-- commit;

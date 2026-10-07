@@ -42,17 +42,17 @@ Lojista não possui papel de login no MVP.
 
 ### Consultor (`Consultant`)
 
-- **Descrição:** Representante comercial vinculado a um usuário (quando houver login).
-- **Responsabilidades:** Manter lojistas; enviar documentos; acompanhar andamento; corrigir pendências.
+- **Descrição:** Representante comercial operacional (`consultants`), distinto de `organization_members`.
+- **Responsabilidades:** Manter lojistas; vínculo opcional com usuário Auth (`user_id`).
 - **Invariantes:** Vê apenas dados sob sua responsabilidade; não acessa dados de outro consultor.
-- **Relacionamentos:** 1 → N lojistas (responsabilidade atual); histórico de vínculos.
+- **Relacionamentos:** 1 → N lojistas (responsabilidade atual); 0..1 `user_id` → `profiles`.
 
 ### Lojista (`Merchant`)
 
-- **Descrição:** Cliente final que assina contratos.
-- **Responsabilidades:** Ser o titular dos contratos; não opera o sistema no MVP.
-- **Invariantes:** Cadastrado **uma única vez** por organização; não duplicar por operadora; possui inicialmente um consultor responsável.
-- **Relacionamentos:** N → 1 consultor responsável (atual); 1 → N contratos; 1 → N histórico de consultor.
+- **Descrição:** Cliente final (`merchants` / UI “Lojistas”). Sem login no MVP.
+- **Responsabilidades:** Titular futuro de contratos; cadastro único por organização.
+- **Invariantes:** Um consultor responsável; mesma organização do consultor (FK composta); documento opcional sem unique rígido (Q17).
+- **Relacionamentos:** N → 1 consultor responsável.
 
 ### Histórico de consultor (`MerchantConsultantHistory`)
 
@@ -172,6 +172,35 @@ Lojista não possui papel de login no MVP.
 - **Descrição:** Catálogo configurável de motivos.
 - **Responsabilidades:** Padronizar pendências sem hard-code.
 
+### Região (`Region`) — proposta
+
+- **Descrição:** Catálogo configurável de regiões/cidades da organização (Q25).
+- **Relacionamentos:** N ↔ N com consultores (`consultant_regions`, D34); contratos podem referenciar região (Q26).
+
+### Consultor ↔ Bandeira (`ConsultantOperator`) — proposta
+
+- **Descrição:** Bandeiras (operadoras) que o consultor atende (D35).
+- **Invariantes:** Sem tabela por bandeira; vínculo com status.
+
+### Navegação de documentos por pastas — proposta
+
+- Região → Consultor → Bandeira → Mês (D36), **derivada** de `contract_documents` + `contracts` + `merchants` + `consultants`; não há entidade "pasta".
+- `contract_documents.reference_month` define o mês (critério em Q21).
+
+### Ação (`Action`) — proposta
+
+- **Descrição:** Ação de bandeira que pode exigir viagem de consultores (D37).
+- **Responsabilidades:** Agrupar participantes, período, região, orçamento e despesas.
+- **Invariantes:** Gerida somente por admin (D38); cancelamento em vez de exclusão.
+- **Relacionamentos:** 0..1 bandeira; 0..1 região; N ↔ N consultores (`action_participants`); 1 → N despesas.
+
+### Despesa da ação (`ActionExpense`) — proposta
+
+- **Descrição:** Gasto ligado à ação (passagem aérea, aluguel de carro, combustível, recarga de cartão combustível/corporativo, contas etc.).
+- **Responsabilidades:** Valor previsto × realizado, fornecedor, forma de pagamento, status, comprovantes.
+- **Invariantes:** Tipo vem de catálogo configurável (`expense_types`); comprovantes em storage privado.
+- **Relacionamentos:** N → 1 ação; N → 1 tipo; 0..1 consultor beneficiado; 1 → N comprovantes.
+
 ## Relacionamentos e cardinalidades
 
 | De | Para | Cardinalidade | Notas |
@@ -187,6 +216,11 @@ Lojista não possui papel de login no MVP.
 | Contract | Field values, Documents, Reviews, Pendencies, History | 1:N | |
 | Contract | Recharges | 1:N | |
 | Recharge | History, Receipts | 1:N | |
+| Consultant | Regions | N:N | `consultant_regions` (proposta) |
+| Consultant | Operators | N:N | `consultant_operators` (proposta) |
+| Action | Consultants | N:N | `action_participants` (proposta) |
+| Action | Expenses | 1:N | Proposta |
+| Expense | Attachments | 1:N | Proposta |
 
 ## Diagrama Mermaid
 
@@ -229,6 +263,22 @@ erDiagram
   RECHARGE ||--o{ COMMENT : may_have
   ORGANIZATION ||--o{ NOTIFICATION : has
   ORGANIZATION ||--o{ INTEGRATION_EVENT : has
+
+  ORGANIZATION ||--o{ REGION : has
+  CONSULTANT ||--o{ CONSULTANT_REGION : serves
+  REGION ||--o{ CONSULTANT_REGION : includes
+  CONSULTANT ||--o{ CONSULTANT_OPERATOR : works_with
+  OPERATOR ||--o{ CONSULTANT_OPERATOR : assigned
+  REGION ||--o{ CONTRACT : optional
+
+  ORGANIZATION ||--o{ ACTION : has
+  OPERATOR ||--o{ ACTION : optional
+  REGION ||--o{ ACTION : optional
+  ACTION ||--o{ ACTION_PARTICIPANT : has
+  CONSULTANT ||--o{ ACTION_PARTICIPANT : joins
+  ACTION ||--o{ ACTION_EXPENSE : has
+  EXPENSE_TYPE ||--o{ ACTION_EXPENSE : categorizes
+  ACTION_EXPENSE ||--o{ EXPENSE_ATTACHMENT : has
 ```
 
 ## Notas
