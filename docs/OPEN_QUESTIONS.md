@@ -24,12 +24,12 @@ Dúvidas **não confirmadas**. Não responder por suposição. Atualizar quando 
 | Q18 | Quais **relatórios operacionais** o operador deve ver? (Auditoria técnica: **não** — consolidado na Sprint 0.1) | Menus e RLS de relatórios | Aberta (escopo de relatórios); auditoria técnica fechada como negada ao operador |
 | Q19 | Consultor pode **cancelar** contrato/recarga após envio? Em quais estados? | Transições e policies | Aberta |
 | Q20 | Reativação `inactive` → `active` é permitida? | Workflow | Aberta |
-| Q21 | O **mês da pasta** do contrato vem de qual data (assinatura, recebimento pelo escritório, cadastro)? Resposta inicial: "por mês", sem data definida | `contract_documents.reference_month`. Proposta: mês de referência explícito no upload | Aberta |
+| Q21 | O **mês da pasta** do contrato vem de qual data (assinatura, recebimento pelo escritório, cadastro)? Resposta inicial: "por mês", sem data definida | `contract_documents.reference_month` | Respondida (D48): mês da **data de assinatura** do contrato |
 | Q22 | Consultor deve **ver** as ações em que participa e os gastos ligados a ele? | RLS de `actions`/`action_expenses`. Hoje: só admin (D38) | Aberta |
 | Q23 | Os **cartões** (combustível/frota e corporativo) precisam de cadastro próprio (titular, final do cartão, saldo) ou basta lançar as recargas como despesa? | Entidade `cards` opcional | Aberta |
 | Q24 | Despesas precisam de **aprovação/reembolso** ou apenas registro de previsto × pago? | Status de `action_expenses` | Aberta |
-| Q25 | **Região** é lista da cliente? Região agrupa cidades ou cada cidade é uma região? | Estrutura de `regions` | Aberta |
-| Q26 | Consultor atende várias regiões (D34): a **região do contrato** vem do endereço do lojista, é escolhida no contrato ou outro critério? | Navegação por pastas; `contracts.region_id` | Aberta |
+| Q25 | **Região** é lista da cliente? Região agrupa cidades ou cada cidade é uma região? | Estrutura de `regions` | Respondida (D50): região = **estado (UF)** |
+| Q26 | Consultor atende várias regiões (D34): a **região do contrato** vem do endereço do lojista, é escolhida no contrato ou outro critério? | Navegação por pastas; `contracts.region_id` | Respondida (D49/D50): vem do **estado (UF) do endereço do lojista** (automático) |
 | Q27 | **Formatos e tamanho máximo** dos arquivos (PDF, JPG, PNG, HEIC?) | Validação de upload; bucket | Aberta |
 | Q28 | Ações têm **orçamento/limite** ou centro de custo? Quem paga (empresa, bandeira, reembolso da bandeira)? | Campos de `actions`; relatórios | Aberta |
 

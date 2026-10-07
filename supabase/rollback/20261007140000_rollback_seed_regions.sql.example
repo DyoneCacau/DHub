@@ -1,0 +1,8 @@
+-- Rollback de referência (NÃO executar sem autorização explícita).
+-- Regiões não são excluídas pelo app; preferir inativar pela tela /regioes.
+-- Exclusão só se nenhuma região tiver vínculos (consultant_regions, actions).
+
+-- delete from public.regions r
+-- where r.state in ('BA','DF','PA','PR','PE','RJ','RS','SC','SP')
+--   and not exists (select 1 from public.consultant_regions cr where cr.region_id = r.id)
+--   and not exists (select 1 from public.actions a where a.region_id = r.id);

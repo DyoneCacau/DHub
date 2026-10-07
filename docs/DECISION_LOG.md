@@ -51,6 +51,10 @@ Apenas **decisões confirmadas**. Propostas, hipóteses e dúvidas → docs de w
 | D45 | 2026-10-07 | Ações e despesas sem DELETE (cancelamento por status); participantes e comprovantes podem ser removidos pelo admin | RLS + grants |
 | D46 | 2026-10-07 | Comprovantes em bucket privado `action-receipts`, caminho `{org}/actions/{action}/…`, acesso por URL assinada de 60 s; limites provisórios 10 MB e PDF/JPEG/PNG/WEBP | Q27 |
 | D47 | 2026-10-07 | Forma de pagamento da despesa é texto livre com sugestões (sem cadastro de cartões por enquanto) | Q23 |
+| D48 | 2026-10-07 | Mês da pasta do contrato = mês da **data de assinatura** | Responde Q21; data de assinatura obrigatória para arquivar na pasta |
+| D49 | 2026-10-07 | Região do contrato vem do **endereço do lojista** (automático), não escolhida no contrato | Responde Q26 |
+| D50 | 2026-10-07 | Região = **estado (UF)**. Região do contrato = região cuja UF é a do endereço do lojista | Responde Q25; na sprint de contratos: no máximo uma região ativa por UF na org e UF do lojista obrigatória para arquivar |
+| D51 | 2026-10-07 | Estados atendidos: BA, CE, DF, MA, PA, PE, PR, RJ, RN, RS, SC, SP (seed); outros entram pela tela quando aparecerem. PI já existia e foi mantido | Migration `20261007140000_seed_regions.sql` |
 
 ## Classificação (obrigatória nos docs)
 
